@@ -1,18 +1,42 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <img width="300px" alt="svgar logo" src="../assets/svgar-logo.png">
+    <br>
+    site development in progress
+    <br>
+    logo in progress
+    <br>
+    everything in progress
+    <br>
+    <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">svgar repo </a>
   </div>
 </template>
 
+<style>
+.home {
+  line-height: 25px;
+
+  color: black;
+
+  font-family: "Consolas", monospace
+}
+
+.home a {
+  color: black;
+}
+
+.home a:hover {
+  background: gainsboro;
+}
+</style>
+
 <script lang="ts">
 import Vue from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 
 export default Vue.extend({
   name: 'home',
   components: {
-    HelloWorld,
+    
   },
 });
 </script>
