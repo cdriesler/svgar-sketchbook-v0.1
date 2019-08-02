@@ -18,8 +18,8 @@ export default Vue.extend({
     name: "donut-drawing",
     data() {
         return {
-            W: 0,
-            H: 0,
+            W: this.size,
+            H: this.size,
             Values: [] as number[],
             Labels: [] as string[],
             Colors: [] as string[],
@@ -31,8 +31,6 @@ export default Vue.extend({
         }
     },
     mounted() {
-        this.W = +this.size;
-        this.H = +this.size;
         this.Values = this.values;
         this.Labels = this.labels;
         this.Colors = this.colors;
@@ -54,7 +52,7 @@ export default Vue.extend({
         svg() : string {
             let DonutGraph = new DonutBuilder(this.values, this.Labels, this.Colors);
 
-            return DonutGraph.Build().Compile(undefined, this.W, this.H);
+            return DonutGraph.Build().Compile(undefined, this.size, this.size);
         }
     },
 })

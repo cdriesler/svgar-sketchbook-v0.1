@@ -1,6 +1,6 @@
 <template>
 <div class="gallery">
-    <div class="canvas">
+    <div class="canvas" @resize="onResize()">
     <div ref="svgar" class="svgar">
         <component
         v-if="w > 0"
@@ -155,13 +155,23 @@ export default Vue.extend({
     },
     mounted() {
         this.w = (<Element>this.$refs.svgar).clientWidth;
+
+        window.addEventListener('resize', this.onResize);
+
     },
     computed: {
         currentDrawingComponent() : string {
             return this.currentTab + "-drawing";
         }
-    }
-    
+    },
+    methods: {
+        onResize() : void {
+            this.w = (<Element>this.$refs.svgar).clientWidth;
+        }
+    },
+    beforeDestroy: function () {
+        window.removeEventListener('resize', this.onResize)
+    },  
 })
 </script>
 
