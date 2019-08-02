@@ -1,8 +1,15 @@
 <template>
 <div class="gallery">
     <div class="canvas">
-    <div class="svgar">
-        
+    <div ref="svgar" class="svgar">
+        <component
+        v-if="w > 0"
+        :is="currentDrawingComponent"
+        :size="+w"
+        :values="[1,      2,      3,        4,   5]" 
+        :labels="['WORK',     'MEET',     'WE',       'OPERATE',  'CIRCULATE']" 
+        :colors="[]"
+        ></component>
     </div>
 
     <div class="selectors">
@@ -11,7 +18,12 @@
                 <path class="arrow" stroke-width="2px" stroke="black" fill="white" d="M 8 2 C 5.5 3.5 5.5 3.5 3 5 C 5.5 6.5 5.5 6.5 8 8 Z" />
             </svg>
         </div>
-        <div v-for="drawing of drawings" v-bind:key="drawing" class="selectors__nib"></div>
+        <div 
+        v-for="drawing of drawings" 
+        v-bind:key="drawing" 
+        @click="currentTab = drawing"
+        :class="{ 'selectors__nib--active' : currentTab === drawing }"
+        class="selectors__nib"></div>
         <div class="selectors__nib nav">
             <svg viewbox="0 0 10px 10px" width="10px" height="10px">
                 <path class="arrow" stroke-width="2px" stroke="black" fill="white" d="M 2 2 C 4.5 3.5 4.5 3.5 7 5 C 4.5 6.5 4.5 6.5 2 8 Z" />
@@ -82,6 +94,10 @@
     outline-offset: -2px;
 }
 
+.selectors__nib--active {
+    background: black;
+}
+
 .selectors__nib:hover:not(.nav) {
     cursor: pointer;
     background: black;
@@ -95,6 +111,10 @@
 .arrow:hover {
     cursor: pointer;
     fill: black;
+}
+
+.toggle-click:hover {
+    cursor: pointer;
 }
 
 .inputs {
@@ -120,10 +140,25 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import DonutDrawing from '../components/DonutDrawing.vue';
+
 export default Vue.extend({
+    components: {
+        DonutDrawing,
+    },
     data() {
         return {
-            drawings: ["pie", "other", "third"]
+            drawings: ["donut", "other", "third"],       
+            currentTab: "donut",
+            w: 0, 
+        }
+    },
+    mounted() {
+        this.w = (<Element>this.$refs.svgar).clientWidth;
+    },
+    computed: {
+        currentDrawingComponent() : string {
+            return this.currentTab + "-drawing";
         }
     }
     
