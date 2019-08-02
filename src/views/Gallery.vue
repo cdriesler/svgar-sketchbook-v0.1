@@ -1,7 +1,7 @@
 <template>
 <div class="gallery">
     <div class="canvas" @resize="onResize()">
-    <div ref="svgar" class="svgar">
+    <div ref="svgar" v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight" class="svgar" >
         <component
         v-if="w > 0"
         :is="currentDrawingComponent"
@@ -167,6 +167,12 @@ export default Vue.extend({
     methods: {
         onResize() : void {
             this.w = (<Element>this.$refs.svgar).clientWidth;
+        },
+        onSwipeLeft() : void {
+            this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) + 1) % this.drawings.length];
+        },
+        onSwipeRight() : void {
+            this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) - 1) % this.drawings.length];
         }
     },
     beforeDestroy: function () {
