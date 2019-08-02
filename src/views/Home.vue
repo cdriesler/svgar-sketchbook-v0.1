@@ -1,24 +1,20 @@
 <template>
   <div class="home">
-    <img width="300px" alt="svgar logo" src="../assets/svgar-logo.png">
+    fancy landing page under construction
     <br>
-    site development in progress
-    <br>
-    logo in progress
-    <br>
-    everything in progress
-    <br>
-    <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">svgar repo </a>
+    (visit the gallery)   
   </div>
 </template>
 
 <style>
 .home {
+  width: 100%;
+
   line-height: 25px;
 
   color: black;
 
-  font-family: "Consolas", monospace
+  text-align: center;
 }
 
 .home a {
