@@ -1,33 +1,151 @@
 <template>
   <div id="app">
-      <!--
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="container">
+      <div class="header">
+        <div class="header__logo">
+          <router-link to="/">
+          <img height="52px" alt="svgar logo" src="./assets/svgar-logo.svg">
+          </router-link>
+        </div> 
+      </div>
+      <div class="navigation">
+        <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/">home</router-link>
+        <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/gallery">gallery</router-link>
+        <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/docs">docs</router-link>
+      </div>
+      <div class="box">
+        <router-view/>
+      </div>
+      <div class="footer">
+        <div class="footer__version">
+          0.1.0.0
+        </div>   
+        <div class="footer__source">
+          <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt;</a>
+        </div>   
+      </div>
+        <!--
+      <div id="nav">
+        <router-link to="/">Home</router-link> |
+        <router-link to="/about">About</router-link>
+      </div>
+        -->  
     </div>
-      -->  
-    <router-view/>
   </div>
 </template>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+
+  font-size: 14px;
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Consolas', monospace, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+
+
 }
-#nav {
-  padding: 30px;
+.container {
+  height: 100%;
+  width: calc(100vw - 30px);
+  max-width: 800px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.header {
+  width: 100%;
+  height: 42px;
+  border-bottom: 2px solid black;
+
+  margin-top: 15px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.navigation {
+  width: 100%;
+  height: 30px;
+  border-bottom: 2px solid black;
+
+  margin-bottom: 20px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
+
+.navigation__link {
+  line-height: 30px;
+  vertical-align: middle;
+
+  text-decoration: none;
+  color: black;
+
+  padding-left: 15px;
+  padding-right: 15px;  
+}
+
+.navigation__link--active {
+  background: black;
+  color: white;
+}
+
+.box {
+  width: 100%;
+
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.footer {
+  width: 100%;
+  height: 25px;
+  border-top: 2px solid black;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.footer__version {
+  margin-left: 15px;
+
+  line-height: 25px;
+  vertical-align: middle;
+  font-size: 10px;
+}
+
+.footer__source a{
+  margin-left: 15px;
+
+  color: black;
+  text-decoration: none;
+
+  line-height: 25px;
+  vertical-align: middle;
+  font-size: 10px;
+}
+
+
 </style>
