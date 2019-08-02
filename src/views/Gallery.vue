@@ -1,9 +1,18 @@
 <template>
 <div class="gallery">
     <div class="canvas" @resize="onResize()">
-    <div ref="svgar" v-touch:swipe.left="onSwipeLeft" v-touch:swipe.right="onSwipeRight" class="svgar" >
+    <div 
+    ref="svgar" 
+    class="svgar"
+    v-touch:swipe.left="onSwipeLeft" 
+    v-touch:swipe.right="onSwipeRight"
+    v-touch:start="startHandler"
+    v-touch:end="endHandler"
+    v-touch:moving="movingHandler" 
+     >
         <component
         v-if="w > 0"
+        
         :is="currentDrawingComponent"
         :size="+w"
         :values="[1,      2,      3,        4,   5]" 
@@ -151,6 +160,8 @@ export default Vue.extend({
             drawings: ["donut", "other", "third"],       
             currentTab: "donut",
             w: 0, 
+            touchStart: 0,
+            touchDelta: 0,
         }
     },
     mounted() {
@@ -162,7 +173,7 @@ export default Vue.extend({
     computed: {
         currentDrawingComponent() : string {
             return this.currentTab + "-drawing";
-        }
+        },
     },
     methods: {
         onResize() : void {
@@ -171,8 +182,23 @@ export default Vue.extend({
         onSwipeLeft() : void {
             this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) + 1) % this.drawings.length];
         },
-        onSwipeRight() : void {
-            this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) - 1) % this.drawings.length];
+        onSwipeRight() : void { 
+            if (this.currentTab == this.drawings[0]) {
+                this.currentTab = this.drawings[this.drawings.length - 1];
+            }
+            else {
+                this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) - 1) % this.drawings.length];
+            }     
+        },
+        startHandler(event: any) : void {
+            this.touchStart = event.touches[0].pageX;
+        },
+        endHandler() : void {
+            this.touchStart = 0;
+            this.touchDelta = 0;
+        },
+        movingHandler(event: any) : void {
+            this.touchDelta = event.touches[0].pageX - this.touchStart;            
         }
     },
     beforeDestroy: function () {
