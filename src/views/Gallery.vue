@@ -9,15 +9,17 @@
     v-touch:start="startHandler"
     v-touch:end="endHandler"
     v-touch:moving="movingHandler" 
-     >
+    >
         <component
         v-if="w > 0"
         
         :is="currentDrawingComponent"
         :size="+w"
+
         :values="[1,      2,      3,        4,   5]" 
         :labels="['WORK',     'MEET',     'WE',       'OPERATE',  'CIRCULATE']" 
         :colors="[]"
+
         ></component>
     </div>
 
