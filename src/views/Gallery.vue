@@ -17,9 +17,9 @@
 
         :is="currentDrawingComponent"
         :size="+w"
-        :state="bw"
+        :state="state"
 
-        :values="[1,      2,      3,        4,   5]" 
+        :values="valueNumbers" 
         :labels="['WORK',     'MEET',     'WE',       'OPERATE',  'CIRCULATE']" 
         :colors="[]"
 
@@ -46,6 +46,7 @@
         </div>
         <component
         :is="currentInputComponent"
+        @update="onInputUpdate"
         > </component>
     </div>
 </div>
@@ -244,6 +245,11 @@ export default Vue.extend({
             w: 0, 
             touchStart: 0,
             touchDelta: 0,
+            state: "bw",
+            values: [
+                10,
+                20
+            ],
             titles: {
                 donut: "donut",
                 other: "other",
@@ -268,6 +274,9 @@ export default Vue.extend({
         },
         currentInputComponent() : string {
             return this.currentTab + "-inputs";
+        },
+        valueNumbers() : number[] {
+            return this.values as number[];
         }
     },
     methods: {
@@ -294,6 +303,9 @@ export default Vue.extend({
         },
         movingHandler(event: any) : void {
             this.touchDelta = event.touches[0].pageX - this.touchStart;            
+        },
+        onInputUpdate(data: any) : void {
+            this.values = data;
         }
     },
     beforeDestroy: function () {

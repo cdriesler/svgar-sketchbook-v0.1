@@ -2,12 +2,12 @@
     <div>
         <div v-for="label of labels" v-bind:key="label" class="slider">
             <div class="slider__value">
-                {{values[labels.indexOf(label)]}}
+                {{labelValue[labels.indexOf(label)]}}
             </div>
             <div class="slider__swatch">
             </div>
             <div class="slider__slider">
-                <input type="range" min="0" max="100" v-model="values[labels.indexOf(label)]" class="slider__input">
+                <input type="range" min="0" max="100" :v-model="values[labels.indexOf(label)]" :value="values[labels.indexOf(label)]" @input="onChange($event.target.valueAsNumber, label)" class="slider__input">
             </div>
         </div>
     </div>
@@ -94,12 +94,30 @@ export default Vue.extend({
         return {
             labels: [
                 "first",
-                "second"
+                "second",
+                "third",
+                "fourth"
             ],
             values: [
                 10,
-                20
+                20,
+                30,
+                40
             ]
+        }
+    },
+    computed: {
+        labelValue() : any {
+            return this.values;
+        }
+    },
+    mounted() {
+        this.$emit('update', this.values);
+    },
+    methods: {
+        onChange(value: number, label: string) : void {
+            Vue.set(this.values, this.labels.indexOf(label), value);
+            this.$emit('update', this.values);
         }
     }
     

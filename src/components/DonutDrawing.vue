@@ -27,7 +27,8 @@ export default Vue.extend({
             ValueTotal: 0,
             ValueParameters: [] as number[],
             CosCoordinates: [] as number[],
-            SinCoordinates: [] as number[]
+            SinCoordinates: [] as number[],
+            Svg: "",
         }
     },
     mounted() {
@@ -50,9 +51,16 @@ export default Vue.extend({
     },
     computed: {
         svg() : string {
-            let DonutGraph = new DonutBuilder(this.values, this.Labels, this.Colors);
+            let DonutGraph = new DonutBuilder(this.values, this.labels, this.colors);
 
-            return DonutGraph.Build().Compile(undefined, this.size, this.size);
+            this.Svg = DonutGraph.Build().Compile(undefined, this.size, this.size);
+
+            this.$forceUpdate();
+
+            return this.Svg;
+        },
+        vals() : number[] {
+            return this.values;
         }
     },
 })
