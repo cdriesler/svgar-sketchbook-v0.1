@@ -42,6 +42,10 @@
   font-size: 14px;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 #app {
   font-family: 'Consolas', monospace, sans-serif;
   -webkit-font-smoothing: antialiased;
