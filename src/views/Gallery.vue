@@ -41,8 +41,12 @@
 
     <div class="inputs">
         <div class="inputs__header">
-            INPUTS
+            <span class="inputs__header__title">{{currentTab}}</span>
+            <span class="inputs__header__description">&nbsp;:&nbsp;{{descriptions[currentTab]}}</span>
         </div>
+        <component
+        :is="currentInputComponent"
+        > </component>
     </div>
 </div>
 </template>
@@ -122,7 +126,7 @@
 .selectors__nib {
     font-size: 10px;
     line-height: 20px;
-    height: 20px;
+    
     vertical-align: middle;
 
     padding-left: 10px;
@@ -188,6 +192,10 @@
     padding-right: -10px;
     max-width: calc(100vw - 30px);
     min-width: 150px;
+
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: clip;
 }
 
 @media screen and (max-width: 500px) {
@@ -200,17 +208,34 @@
 
 .inputs__header {
     border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    font-size: 12px;
+    line-height: 30px;
     width: 100%;
+
+    margin-bottom: 10px;
+}
+
+.inputs__header__title {
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.inputs__header__description {
+    font-size: 12px;
 }
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import DonutDrawing from '../components/DonutDrawing.vue';
+import DonutInputs from '../components/DonutInputs.vue';
 
 export default Vue.extend({
     components: {
         DonutDrawing,
+        DonutInputs
     },
     data() {
         return {
@@ -225,6 +250,9 @@ export default Vue.extend({
                 third: "third",
                 long: "really long title",
                 longer: "really really really really long title"
+            },
+            descriptions: {
+                donut: "two color states"
             }
         }
     },
@@ -238,6 +266,9 @@ export default Vue.extend({
         currentDrawingComponent() : string {
             return this.currentTab + "-drawing";
         },
+        currentInputComponent() : string {
+            return this.currentTab + "-inputs";
+        }
     },
     methods: {
         onResize() : void {
