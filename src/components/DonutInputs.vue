@@ -2,10 +2,12 @@
     <div>
         <div v-for="label of labels" v-bind:key="label" class="slider">
             <div class="slider__value">
+                {{values[labels.indexOf(label)]}}
             </div>
             <div class="slider__swatch">
             </div>
             <div class="slider__slider">
+                <input type="range" min="0" max="100" v-model="values[labels.indexOf(label)]" class="slider__input">
             </div>
         </div>
     </div>
@@ -19,6 +21,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    align-items: flex-start;
 
     margin-bottom: 10px;
 }
@@ -26,6 +29,11 @@
 .slider__value {
     width: 40px;
     height: 100%;
+
+    line-height: 20px;
+    text-align: center;
+
+    font-size: 10px;
 
     margin-right: 5px;
 
@@ -47,7 +55,34 @@
 
     height: 100%;
 
-    background: red;
+    transform: translateY(-2px);
+}
+
+.slider__input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+
+    background: gainsboro;
+}
+
+.slider__input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 20px;
+    border: 2px solid black;
+    background: white;
+    cursor: pointer;
+}
+
+.slider__input::-moz-range-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 20px;
+    border: 2px solid black;
+    background: white;
+    cursor: pointer;
 }
 </style>
 
@@ -60,6 +95,10 @@ export default Vue.extend({
             labels: [
                 "first",
                 "second"
+            ],
+            values: [
+                10,
+                20
             ]
         }
     }
