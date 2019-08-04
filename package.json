@@ -11,7 +11,7 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "register-service-worker": "^1.6.2",
-    "svgar": "^0.1.3",
+    "svgar": "^0.1.9",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vue2-touch-events": "^2.0.0",

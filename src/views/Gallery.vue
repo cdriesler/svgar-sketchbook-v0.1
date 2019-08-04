@@ -4,11 +4,6 @@
     <div 
     ref="svgar" 
     class="svgar"
-    v-touch:swipe.left="onSwipeLeft" 
-    v-touch:swipe.right="onSwipeRight"
-    v-touch:start="startHandler"
-    v-touch:end="endHandler"
-    v-touch:moving="movingHandler" 
     >
         <component
         v-if="w > 0"
@@ -17,10 +12,12 @@
 
         :is="currentDrawingComponent"
         :size="+w"
-        :state="state"
+        :state="state" 
+        :selected="selectedTags"     
+        @selection="onDrawingSelection"
 
         :values="valueNumbers" 
-        :labels="['WORK',     'MEET',     'WE',       'OPERATE',  'CIRCULATE']" 
+        :labels="labels" 
         :colors="[]"
 
         ></component>
@@ -46,6 +43,7 @@
         </div>
         <component
         :is="currentInputComponent"
+        :selected="selectedIndex"
         @update="onInputUpdate"
         > </component>
     </div>
@@ -183,10 +181,6 @@
     fill: black;
 }
 
-.toggle-click:hover {
-    cursor: pointer;
-}
-
 .inputs {
     flex-grow: 1;
     padding-left: 20px;
@@ -194,7 +188,7 @@
     max-width: calc(100vw - 30px);
     min-width: 150px;
 
-    overflow-x: hidden;
+    overflow-x: visible;
     white-space: nowrap;
     text-overflow: clip;
 }
@@ -259,7 +253,15 @@ export default Vue.extend({
             },
             descriptions: {
                 donut: "two color states"
-            }
+            },
+            labels: [
+                'WORK',     
+                'MEET',     
+                'WE',       
+                'OPERATE',  
+                'CIRCULATE'
+            ],
+            selectedTags: [] as string[],
         }
     },
     mounted() {
@@ -277,6 +279,17 @@ export default Vue.extend({
         },
         valueNumbers() : number[] {
             return this.values as number[];
+        },
+        selectedIndex() : number {
+            let valid = this.selectedTags.filter(x => this.labels.includes(x));
+
+            if (valid.length <= 0) {
+                return -1;
+            }
+
+            let i = this.labels.indexOf(valid[0]) + 1;
+
+            return i == this.labels.length - 1 ? 0 : i;
         }
     },
     methods: {
@@ -306,6 +319,9 @@ export default Vue.extend({
         },
         onInputUpdate(data: any) : void {
             this.values = data;
+        },
+        onDrawingSelection(tags: string[]) : void {
+            this.selectedTags = tags;
         }
     },
     beforeDestroy: function () {

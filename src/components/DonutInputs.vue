@@ -1,7 +1,11 @@
 <template>
     <div>
-        <div v-for="label of labels" v-bind:key="label" class="slider">
-            <div class="slider__value">
+        <div 
+        v-for="label of labels" 
+        v-bind:key="label" 
+        class="slider"
+        >
+            <div class="slider__value" :class="{ 'slider__value--active' : labels.indexOf(label) == selected }">
                 {{labelValue[labels.indexOf(label)]}}
             </div>
             <div class="slider__swatch">
@@ -39,6 +43,11 @@
 
     outline: 2px solid black;
     outline-offset: -2px;
+}
+
+.slider__value--active {
+    background: black;
+    color: white;
 }
 
 .slider__swatch {
@@ -90,6 +99,7 @@
 import Vue from 'vue'
 export default Vue.extend({
     name: "donut-inputs",
+    props: ['selected'],
     data() {
         return {
             labels: [
@@ -99,10 +109,10 @@ export default Vue.extend({
                 "fourth"
             ],
             values: [
-                10,
-                20,
-                30,
-                40
+                16,
+                54,
+                21,
+                10
             ]
         }
     },
@@ -118,6 +128,10 @@ export default Vue.extend({
         onChange(value: number, label: string) : void {
             Vue.set(this.values, this.labels.indexOf(label), value);
             this.$emit('update', this.values);
+        },
+        onClick(event: any) : void {
+            console.log(event.path[0].attributes["svgar-tags"].value);
+            //event.path[0].attributes.svgar-tags.value
         }
     }
     

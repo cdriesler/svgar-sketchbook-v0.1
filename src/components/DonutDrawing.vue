@@ -1,20 +1,54 @@
 <template>
-<div>
-    <div v-html="svg">
-    </div>
-</div>
+    <svg
+    :xmlns="Svgar.xmlns"
+    :version="Svgar.version"
+    :viewBox="Svgar.viewBox"
+    :width="Svgar.width + 'px'"
+    :height="Svgar.height + 'px'">
+        <g 
+        v-for="layer in Svgar.layers" 
+        :key="'layer_' + Svgar.layers.indexOf(layer)"
+        :style="layer.styleInline"
+        :svgar-tags="layer.tags"
+        :clip-path="layer.clipPathUrl"
+        :class="tagsToClasses(layer.tags)" >
+            <clipPath v-if="layer.clipPath != ''" v-html="layer.clipPath"></clipPath>
+            <path
+            v-for="geo in layer.geometry"
+            :key="'geo_' + layer.geometry.indexOf(geo)"
+            :d="geo.d"
+            :style="geo.styleInline"
+            :svgar-tags="geo.tags"
+            :class="[tagsToClasses(geo.tags), { 'slice--active' : selected[0] == geo.tags[0] && geo.tags.includes('slice') }]"
+            @click="onClick($event, geo.tags)">
+            </path>   
+        </g>
+    </svg>
 </template>
 
-<style>
 
+<style>
+.slice:hover {
+    cursor: pointer;
+    fill-opacity: 0.5;
+}
+
+.toggle:hover {
+    cursor: pointer;
+}
+
+.slice--active {
+    fill: black !important;
+}
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import DonutBuilder from "./DonutBuilder";
+import { SvgarDrawing } from 'svgar/dist/models/schema/drawing/Drawing';
 
 export default Vue.extend({
-    props: ['size', 'values', 'labels', 'colors'],
+    props: ['size', 'values', 'labels', 'colors', 'selected'],
     name: "donut-drawing",
     data() {
         return {
@@ -51,17 +85,40 @@ export default Vue.extend({
     },
     computed: {
         svg() : string {
-            let DonutGraph = new DonutBuilder(this.values, this.labels, this.colors);
+            // let DonutGraph = new DonutBuilder(this.values, this.labels, this.colors);
+            // this.Svg = DonutGraph.Build().Compile(undefined, this.size, this.size, "vue");
 
-            this.Svg = DonutGraph.Build().Compile(undefined, this.size, this.size);
-
-            this.$forceUpdate();
+            this.Svg = "";
 
             return this.Svg;
         },
         vals() : number[] {
             return this.values;
+        },
+        liveSvg() : any {
+            return Vue.compile(this.svg);
+        },
+        Svgar() : SvgarDrawing {
+            let DonutGraph = new DonutBuilder(this.values, this.labels, this.colors);
+            return DonutGraph.Build().ToSvg(undefined, this.size, this.size);
         }
     },
+    methods: {
+        svgarOnClick(event: any) : void {
+            console.log(event);
+        },
+        onClick(event: any, tags: string[]) : void {
+            this.$emit('selection', tags);
+        },
+        tagsToClasses(tags: string[]) : string {
+            let classes = "";
+
+            tags.forEach(x => {
+                classes = classes + " " + x;
+            });
+
+            return classes;
+        }
+    }
 })
 </script>

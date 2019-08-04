@@ -95,6 +95,9 @@ export default class DonutBuilder {
                     .LineTo([nextX, nextY])
                     .LineTo([0.5, 0.5])
                 }
+                else if (aY > bY) {
+
+                }
                 else {
                     // Slice does not pass and can be simpler
                     line
@@ -154,7 +157,7 @@ export default class DonutBuilder {
                 let tag = this.Labels[i];
     
                 if (this.Colors[i] == undefined) {
-                    let pct = (i / this.Values.length) * 255;
+                    let pct = 200 - ((i / this.Values.length) * 200);
                     this.Colors[i] = this.RGBtoHex([pct, pct, pct]);
                 }
     
