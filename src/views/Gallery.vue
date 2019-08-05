@@ -22,6 +22,9 @@
 
         :outerCorners="outer"
         :innerCorners="inner"
+        @startmove="onStartMove"
+        @endmove="onEndMove"
+        @move="onMove"
 
         ></component>
     </div>
@@ -244,6 +247,8 @@ export default Vue.extend({
             drawings: ["donut", "plan"],       
             currentTab: "plan",
             w: 0, 
+            offsetLeft: 0,
+            offsetTop: 0,
             touchStart: 0,
             touchDelta: 0,
             state: "bw",
@@ -267,11 +272,18 @@ export default Vue.extend({
             ],
             selectedTags: [] as string[],
             outer: [.7, .9, .3, .9, .3, .1, .7, .1],
-            inner: [.55, .7, .45, .7, .45, .3, .55, .3]
+            inner: [.55, .7, .45, .7, .45, .3, .55, .3],
+            moveIndex: -1,
+            moveStart: 0,
+            moveDelta: 0,
+            moveDirection: "",
+            moveTarget: "",
+            moving: false,
         }
     },
     mounted() {
-        this.w = (<Element>this.$refs.svgar).clientWidth;
+        let canvas = <Element>this.$refs.svgar;
+        this.w = canvas.clientWidth;
 
         window.addEventListener('resize', this.onResize);
 
@@ -328,6 +340,38 @@ export default Vue.extend({
         },
         onDrawingSelection(tags: string[]) : void {
             this.selectedTags = tags;
+        },
+        onStartMove(event: any, tags: string[]) : void {
+            // Get extents of canvas in pixel dimensions so delta can be normalized
+            this.offsetLeft = event.path[3].offsetLeft;
+            this.offsetTop = event.path[3].offsetTop;
+
+            this.moveDirection = tags.includes("bottom") || tags.includes("top") ? "Y" : "X";
+            this.moveTarget = tags.includes("outer") ? "outer" : "inner";
+
+            this.moveStart = this.moveDirection == "Y" ? event.pageY : event.pageX;
+
+            this.moving = true;
+            
+            console.log("START: " + this.moveStart);
+        },
+        onEndMove(event: any, tags: string[]) : void {
+            // Commit move to data and clear delta;
+
+            this.moving = false;
+
+            console.log("END: " + tags);
+        },
+        onMove(event: any) : void {
+            //console.log(event);
+
+            this.moveDelta = this.moveDirection == "Y" 
+            ? (event.pageY / this.w) - (this.moveStart / this.w)
+            : (event.pageX - this.moveStart) / this.w;
+
+            if(this.moving) {
+                console.log(this.moveDelta);
+            }
         }
     },
     beforeDestroy: function () {

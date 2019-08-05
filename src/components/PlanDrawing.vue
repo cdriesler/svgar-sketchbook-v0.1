@@ -16,13 +16,19 @@
             :d="geo.d"
             :style="geo.styleInline"
             :svgar-tags="geo.tags"
-            @mousedown="onMouseDown">
+            :class="tagsToClasses(geo.tags)"
+            @mousedown="onMouseDown($event, geo.tags)"
+            @mousemove="onMouseMove($event, geo.tags)"
+            @mouseup="onMouseUp($event, geo.tags)">
             </path>
         </g>
     </svg>
 </template>
 
 <style>
+.arrow:hover {
+    fill: black !important;
+}
 
 </style>
 
@@ -40,8 +46,23 @@ export default Vue.extend({
         }
     },
     methods: {
-        onMouseDown(event: any) : void {
-            console.log(event);
+        onMouseDown(event: any, tags: string[]) : void {
+            this.$emit('startmove', event, tags);
+        },
+        onMouseMove(event: any, tags: string[]) : void {
+            this.$emit('move', event, tags);
+        },
+        onMouseUp(event: any, tags: string[]) : void {
+            this.$emit('endmove', event, tags);
+        },
+        tagsToClasses(tags: string[]) : string {
+            let classes = "";
+
+            tags.forEach(x => {
+                classes = classes + " " + x;
+            });
+
+            return classes;
         }
     }
 })

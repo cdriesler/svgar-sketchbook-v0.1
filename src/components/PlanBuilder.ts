@@ -1,4 +1,4 @@
-import { Drawing, Layer, State, PolylineBuilder, StyleBuilder, CircleBuilder } from 'svgar';
+import { Drawing, Layer, State, PolylineBuilder, StyleBuilder, CircleBuilder, GeometryElement } from 'svgar';
 
 export default class PlanBuilder {
 
@@ -25,6 +25,10 @@ export default class PlanBuilder {
         // Build geometries
         let outerLayer = new Layer("outer wall");
         let innerLayer = new Layer("inner wall");
+        let controlArrows = new Layer("control arrows");
+
+        let arrowOffset = 0.01;
+        let arrowSize = 0.02;
 
         // Draw outer and inner wall lines
         for(let i = 0; i < 8; i+=2) {
@@ -33,6 +37,7 @@ export default class PlanBuilder {
             let bXi = i == 6 ? 0 : i + 2;
             let bYi = i == 6 ? 1 : i + 3;
 
+            // Outer wall
             let oXa = this.OuterCorners[aXi];
             let oYa = this.OuterCorners[aYi];
             let oXb = this.OuterCorners[bXi];
@@ -42,6 +47,7 @@ export default class PlanBuilder {
                 new PolylineBuilder([oXa, oYa]).LineTo([oXb, oYb]).Build().AddTags(["outer", "wall-line", titles[i / 2]])
             );
 
+            // Inner wall
             let iXa = this.InnerCorners[aXi];
             let iYa = this.InnerCorners[aYi];
             let iXb = this.InnerCorners[bXi];
@@ -50,9 +56,60 @@ export default class PlanBuilder {
             innerLayer.AddGeometry(
                 new PolylineBuilder([iXa, iYa]).LineTo([iXb, iYb]).Build().AddTags(["inner", "wall-line", titles[i / 2]])
             );
+
+            // Control arrows
+            let oPt = [(oXa + oXb) / 2, (oYa + oYb) / 2];
+            let iPt = [(iXa + iXb) / 2, (iYa + iYb) / 2];
+
+            if (i == 0 || i == 4) {
+                // Horizontal segment
+
+                // Outer edge arrows
+                let outerTopPoints = [
+                    oPt[0] + arrowSize,
+                    oPt[1],
+                    oPt[0],
+                    oPt[1] + arrowSize,
+                    oPt[0] - arrowSize,
+                    oPt[1],
+                    oPt[0] + arrowSize,
+                    oPt[1]
+                ]
+
+                let outerBottomPoints = [
+                    oPt[0] + arrowSize,
+                    oPt[1],
+                    oPt[0],
+                    oPt[1] - arrowSize,
+                    oPt[0] - arrowSize,
+                    oPt[1],
+                    oPt[0] + arrowSize,
+                    oPt[1]
+                ]
+
+                // Apply offset
+                for(let j = 1; j < 8; j+=2) {
+                    outerTopPoints[j] = outerTopPoints[j] + arrowOffset;
+                    outerBottomPoints[j] = outerBottomPoints[j] - arrowOffset;
+                }
+
+                let oT = outerTopPoints;
+                let oB = outerBottomPoints;
+
+                // Build geometry
+                controlArrows.AddGeometries([
+                    new PolylineBuilder([oT[0], oT[1]]).LineTo([oT[2], oT[3]]).LineTo([oT[4], oT[5]]).LineTo([oT[6], oT[7]])
+                    .Build().AddTags(["outer", "top", "arrow", titles[i / 2]]),
+                    new PolylineBuilder([oB[0], oB[1]]).LineTo([oB[2], oB[3]]).LineTo([oB[4], oB[5]]).LineTo([oB[6], oB[7]])
+                    .Build().AddTags(["outer", "bottom", "arrow", titles[i / 2]])
+                ]);
+            }
+            else {
+                // Vertical segment
+            }
         }
 
-        Plan.AddLayer(outerLayer).AddLayer(innerLayer);
+        Plan.AddLayer(outerLayer).AddLayer(innerLayer).AddLayer(controlArrows);
 
         // Build states
         Plan.AddState(
@@ -63,6 +120,12 @@ export default class PlanBuilder {
                 .Stroke("#000000")
                 .StrokeWidth("2px").Build()
             ).Target("wall-control", "wall-line")
+            .AddStyle(
+                new StyleBuilder("arrow-control")
+                .Fill("#ffffff")
+                .Stroke("#000000")
+                .StrokeWidth("2px").Build()
+            ).Target("arrow-control", "arrow")
         );
 
         return Plan;
