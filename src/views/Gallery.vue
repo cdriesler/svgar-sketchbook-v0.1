@@ -1,5 +1,5 @@
 <template>
-<div class="gallery">
+<div class="gallery" @keydown.esc="onCancel">
     <div class="canvas" @resize="onResize()">
     <div 
     ref="svgar" 
@@ -13,12 +13,20 @@
         :is="currentDrawingComponent"
         :size="+w"
         :state="state" 
+        :planState="planState"
         :selected="selectedTags"     
         @selection="onDrawingSelection"
 
         :values="valueNumbers" 
         :labels="labels" 
         :colors="[]"
+
+        :outerCorners="outerCornerPts"
+        :innerCorners="innerCornerPts"
+        @startmove="onStartMove"
+        @endmove="onEndMove"
+        @move="onMove"
+        
 
         ></component>
     </div>
@@ -45,6 +53,8 @@
         :is="currentInputComponent"
         :selected="selectedIndex"
         @update="onInputUpdate"
+        @reset="onReset"
+        @updateState="onUpdatePlanState"
         > </component>
     </div>
 </div>
@@ -226,17 +236,23 @@
 import Vue from 'vue'
 import DonutDrawing from '../components/DonutDrawing.vue';
 import DonutInputs from '../components/DonutInputs.vue';
+import PlanDrawing from '../components/PlanDrawing.vue';
+import PlanInputs from '../components/PlanInputs.vue';
 
 export default Vue.extend({
     components: {
         DonutDrawing,
-        DonutInputs
+        DonutInputs,
+        PlanDrawing,
+        PlanInputs
     },
     data() {
         return {
-            drawings: ["donut", "other", "third", "long", "longer"],       
-            currentTab: "donut",
+            drawings: ["donut", "plan"],       
+            currentTab: "plan",
             w: 0, 
+            offsetLeft: 0,
+            offsetTop: 0,
             touchStart: 0,
             touchDelta: 0,
             state: "bw",
@@ -246,10 +262,7 @@ export default Vue.extend({
             ],
             titles: {
                 donut: "donut",
-                other: "other",
-                third: "third",
-                long: "really long title",
-                longer: "really really really really long title"
+                plan: "square plan",
             },
             descriptions: {
                 donut: "two color states"
@@ -262,10 +275,20 @@ export default Vue.extend({
                 'CIRCULATE'
             ],
             selectedTags: [] as string[],
+            outer: [.7, .9, .3, .9, .3, .1, .7, .1],
+            inner: [.55, .7, .45, .7, .45, .3, .55, .3],
+            planState: "edit",
+            moveIndex: [] as number[],
+            moveStart: 0,
+            moveDelta: 0,
+            moveDirection: "",
+            moveTarget: "",
+            moving: false,
         }
     },
     mounted() {
-        this.w = (<Element>this.$refs.svgar).clientWidth;
+        let canvas = <Element>this.$refs.svgar;
+        this.w = canvas.clientWidth;
 
         window.addEventListener('resize', this.onResize);
 
@@ -290,6 +313,46 @@ export default Vue.extend({
             let i = this.labels.indexOf(valid[0]) + 1;
 
             return i == this.labels.length - 1 ? 0 : i;
+        },
+        outerCornerPts() : number[] {
+            if(this.moving) {
+                if (this.moveTarget == "outer") {
+                    let modifiedOuter:number[] = [];
+
+                    for (let i = 0; i < 8; i++) {
+                        if(this.moveIndex.includes(i)) {
+                            modifiedOuter.push(this.outer[i] + this.moveDelta);
+                        }
+                        else {
+                            modifiedOuter.push(this.outer[i])
+                        }
+                    }
+
+                    return modifiedOuter;
+                }
+            }
+
+            return this.outer;      
+        },
+        innerCornerPts() : number[] {
+            if(this.moving) {
+                if(this.moveTarget == "inner") {
+                    let modifiedInner:number[] = [];
+
+                    for (let i = 0; i < 8; i++) {
+                        if(this.moveIndex.includes(i)) {
+                            modifiedInner.push(this.inner[i] + this.moveDelta);
+                        }
+                        else {
+                            modifiedInner.push(this.inner[i]);
+                        }
+                    }
+
+                    return modifiedInner;
+                }
+            }
+
+            return this.inner;
         }
     },
     methods: {
@@ -322,6 +385,88 @@ export default Vue.extend({
         },
         onDrawingSelection(tags: string[]) : void {
             this.selectedTags = tags;
+        },
+        onCancel() : void {
+            console.log("PLEASE STOP");
+            this.moving = false;
+        },
+        onReset() : void {
+            this.moving = false;
+            this.outer = [.7, .9, .3, .9, .3, .1, .7, .1];
+            this.inner = [.55, .7, .45, .7, .45, .3, .55, .3];
+        },
+        onUpdatePlanState(state: string) : void {
+            this.planState = state;
+        },
+        onStartMove(event: MouseEvent | TouchEvent, tags: string[]) : void {
+            let x: number = 0;
+            let y: number = 0;
+            
+            if(event instanceof MouseEvent) {
+                x = event.pageX;
+                y = event.pageY;
+            }
+            else {
+                x = event.targetTouches[0].pageX;
+                y = event.targetTouches[0].pageY;
+            }
+
+            // Identify coordinates to modify.
+            if(tags.includes("first")) {
+                this.moveIndex = [1, 3];
+            }
+            if(tags.includes("third")) {
+                this.moveIndex = [5, 7];
+            }
+            if(tags.includes("second")) {
+                this.moveIndex = [2, 4];
+            }
+            if(tags.includes("fourth")) {
+                this.moveIndex = [0, 6];
+            }
+
+            this.moveDirection = tags.includes("first") || tags.includes("third") ? "Y" : "X";
+            this.moveTarget = tags.includes("outer") ? "outer" : "inner";
+
+            this.moveDelta = 0;
+            this.moveStart = this.moveDirection == "Y" ? y : x;
+
+            this.moving = true;
+        },
+        onEndMove(event: any, tags: string[]) : void {
+            // Commit move to data and clear delta;
+            if(this.moveTarget == "outer") {
+                this.moveIndex.forEach(x => {
+                    this.outer[x] = this.outer[x] + this.moveDelta;
+                });
+            }
+
+            if(this.moveTarget == "inner") {
+                this.moveIndex.forEach(x => {
+                    this.inner[x] = this.inner[x] + this.moveDelta;
+                })
+            }
+
+            this.moveIndex = [];
+            this.moveDelta = 0;
+            this.moving = false;
+        },
+        onMove(event: MouseEvent | TouchEvent) : void {
+            let x:number = 0;
+            let y:number = 0;
+
+            if(event instanceof MouseEvent) {
+                x = event.pageX;
+                y = event.pageY;
+            }
+            else {
+                x = event.targetTouches[0].pageX;
+                y = event.targetTouches[0].pageY;
+            }
+
+            this.moveDelta = this.moveDirection == "Y" 
+            ? (this.moveStart / this.w) - (y / this.w)
+            : (x / this.w) - (this.moveStart / this.w);
         }
     },
     beforeDestroy: function () {
