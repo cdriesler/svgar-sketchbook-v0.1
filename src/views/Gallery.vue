@@ -13,6 +13,7 @@
         :is="currentDrawingComponent"
         :size="+w"
         :state="state" 
+        :planState="planState"
         :selected="selectedTags"     
         @selection="onDrawingSelection"
 
@@ -53,6 +54,7 @@
         :selected="selectedIndex"
         @update="onInputUpdate"
         @reset="onReset"
+        @updateState="onUpdatePlanState"
         > </component>
     </div>
 </div>
@@ -275,6 +277,7 @@ export default Vue.extend({
             selectedTags: [] as string[],
             outer: [.7, .9, .3, .9, .3, .1, .7, .1],
             inner: [.55, .7, .45, .7, .45, .3, .55, .3],
+            planState: "edit",
             moveIndex: [] as number[],
             moveStart: 0,
             moveDelta: 0,
@@ -392,6 +395,9 @@ export default Vue.extend({
             this.outer = [.7, .9, .3, .9, .3, .1, .7, .1];
             this.inner = [.55, .7, .45, .7, .45, .3, .55, .3];
         },
+        onUpdatePlanState(state: string) : void {
+            this.planState = state;
+        },
         onStartMove(event: MouseEvent | TouchEvent, tags: string[]) : void {
             let x: number = 0;
             let y: number = 0;
@@ -419,7 +425,7 @@ export default Vue.extend({
                 this.moveIndex = [0, 6];
             }
 
-            this.moveDirection = tags.includes("bottom") || tags.includes("top") ? "Y" : "X";
+            this.moveDirection = tags.includes("first") || tags.includes("third") ? "Y" : "X";
             this.moveTarget = tags.includes("outer") ? "outer" : "inner";
 
             this.moveDelta = 0;
@@ -460,7 +466,7 @@ export default Vue.extend({
 
             this.moveDelta = this.moveDirection == "Y" 
             ? (this.moveStart / this.w) - (y / this.w)
-            : (this.moveStart / this.w) - (x / this.w);
+            : (x / this.w) - (this.moveStart / this.w);
         }
     },
     beforeDestroy: function () {

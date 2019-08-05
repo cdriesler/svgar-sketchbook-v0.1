@@ -43,10 +43,10 @@ import { SvgarDrawing } from 'svgar/dist/models/schema/drawing/Drawing';
 
 export default Vue.extend({
     name: "plan-drawing",
-    props: ["size", "outerCorners", "innerCorners"],
+    props: ["size", "planState", "outerCorners", "innerCorners"],
     computed: {
         svgar() : SvgarDrawing {
-            return new PlanBuilder(this.outerCorners, this.innerCorners).Build().ToSvg(undefined, this.size, this.size);
+            return new PlanBuilder(this.outerCorners, this.innerCorners).Build().ToSvg(this.planState, this.size, this.size);
         }
     },
     methods: {
