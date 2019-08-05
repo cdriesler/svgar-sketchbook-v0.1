@@ -20,7 +20,10 @@
             @mousedown="onMouseDown($event, geo.tags)"
             @mousemove="onMouseMove($event, geo.tags)"
             @mouseleave="onMouseUp($event, geo.tags)"
-            @mouseup="onMouseUp($event, geo.tags)">
+            @mouseup="onMouseUp($event, geo.tags)"
+            @touchstart="onMouseDown($event, geo.tags)"
+            @touchend="onMouseUp($event, geo.tags)"
+            @touchmove="onMouseMove($event, geo.tags)">
             </path>
         </g>
     </svg>

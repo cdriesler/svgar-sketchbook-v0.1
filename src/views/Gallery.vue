@@ -392,10 +392,18 @@ export default Vue.extend({
             this.outer = [.7, .9, .3, .9, .3, .1, .7, .1];
             this.inner = [.55, .7, .45, .7, .45, .3, .55, .3];
         },
-        onStartMove(event: any, tags: string[]) : void {
-            // Get extents of canvas in pixel dimensions so delta can be normalized
-            this.offsetLeft = event.path[3].offsetLeft;
-            this.offsetTop = event.path[3].offsetTop;
+        onStartMove(event: MouseEvent | TouchEvent, tags: string[]) : void {
+            let x: number = 0;
+            let y: number = 0;
+            
+            if(event instanceof MouseEvent) {
+                x = event.pageX;
+                y = event.pageY;
+            }
+            else {
+                x = event.targetTouches[0].pageX;
+                y = event.targetTouches[0].pageY;
+            }
 
             // Identify coordinates to modify.
             if(tags.includes("first")) {
@@ -415,7 +423,7 @@ export default Vue.extend({
             this.moveTarget = tags.includes("outer") ? "outer" : "inner";
 
             this.moveDelta = 0;
-            this.moveStart = this.moveDirection == "Y" ? event.pageY : event.pageX;
+            this.moveStart = this.moveDirection == "Y" ? y : x;
 
             this.moving = true;
         },
@@ -437,12 +445,22 @@ export default Vue.extend({
             this.moveDelta = 0;
             this.moving = false;
         },
-        onMove(event: any) : void {
-            //console.log(event);
+        onMove(event: MouseEvent | TouchEvent) : void {
+            let x:number = 0;
+            let y:number = 0;
+
+            if(event instanceof MouseEvent) {
+                x = event.pageX;
+                y = event.pageY;
+            }
+            else {
+                x = event.targetTouches[0].pageX;
+                y = event.targetTouches[0].pageY;
+            }
 
             this.moveDelta = this.moveDirection == "Y" 
-            ? (this.moveStart / this.w) - (event.pageY / this.w)
-            : (this.moveStart / this.w) - (event.pageX / this.w);
+            ? (this.moveStart / this.w) - (y / this.w)
+            : (this.moveStart / this.w) - (x / this.w);
         }
     },
     beforeDestroy: function () {
