@@ -20,8 +20,8 @@
         :labels="labels" 
         :colors="[]"
 
-        :outerCorners="outer"
-        :innerCorners="inner"
+        :outerCorners="outerCornerPts"
+        :innerCorners="innerCornerPts"
         @startmove="onStartMove"
         @endmove="onEndMove"
         @move="onMove"
@@ -273,7 +273,7 @@ export default Vue.extend({
             selectedTags: [] as string[],
             outer: [.7, .9, .3, .9, .3, .1, .7, .1],
             inner: [.55, .7, .45, .7, .45, .3, .55, .3],
-            moveIndex: -1,
+            moveIndex: [] as number[],
             moveStart: 0,
             moveDelta: 0,
             moveDirection: "",
@@ -308,6 +308,46 @@ export default Vue.extend({
             let i = this.labels.indexOf(valid[0]) + 1;
 
             return i == this.labels.length - 1 ? 0 : i;
+        },
+        outerCornerPts() : number[] {
+            if(this.moving) {
+                if (this.moveTarget == "outer") {
+                    let modifiedOuter:number[] = [];
+
+                    for (let i = 0; i < 8; i++) {
+                        if(this.moveIndex.includes(i)) {
+                            modifiedOuter.push(this.outer[i] + this.moveDelta);
+                        }
+                        else {
+                            modifiedOuter.push(this.outer[i])
+                        }
+                    }
+
+                    return modifiedOuter;
+                }
+            }
+
+            return this.outer;      
+        },
+        innerCornerPts() : number[] {
+            if(this.moving) {
+                if(this.moveTarget == "inner") {
+                    let modifiedInner:number[] = [];
+
+                    for (let i = 0; i < 8; i++) {
+                        if(this.moveIndex.includes(i)) {
+                            modifiedInner.push(this.inner[i] + this.moveDelta);
+                        }
+                        else {
+                            modifiedInner.push(this.inner[i]);
+                        }
+                    }
+
+                    return modifiedInner;
+                }
+            }
+
+            return this.inner;
         }
     },
     methods: {
@@ -350,6 +390,21 @@ export default Vue.extend({
             this.moveTarget = tags.includes("outer") ? "outer" : "inner";
 
             this.moveStart = this.moveDirection == "Y" ? event.pageY : event.pageX;
+            this.moveDelta = 0;
+
+            // Identify coordinates to modify.
+            if(tags.includes("top")) {
+                this.moveIndex = [1, 3];
+            }
+            if(tags.includes("bottom")) {
+                this.moveIndex = [5, 7];
+            }
+            if(tags.includes("left")) {
+                this.moveIndex = [2, 4];
+            }
+            if(tags.includes("right")) {
+                this.moveIndex = [0, 6];
+            }
 
             this.moving = true;
             
@@ -357,8 +412,20 @@ export default Vue.extend({
         },
         onEndMove(event: any, tags: string[]) : void {
             // Commit move to data and clear delta;
+            if(this.moveTarget == "outer") {
+                this.moveIndex.forEach(x => {
+                    this.outer[x] = this.outer[x] + this.moveDelta;
+                });
+            }
+
+            if(this.moveTarget == "inner") {
+                this.moveIndex.forEach(x => {
+                    this.inner[x] = this.inner[x] + this.moveDelta;
+                })
+            }
 
             this.moving = false;
+            this.moveDelta = 0;
 
             console.log("END: " + tags);
         },
@@ -366,8 +433,8 @@ export default Vue.extend({
             //console.log(event);
 
             this.moveDelta = this.moveDirection == "Y" 
-            ? (event.pageY / this.w) - (this.moveStart / this.w)
-            : (event.pageX - this.moveStart) / this.w;
+            ? (this.moveStart / this.w) - (event.pageY / this.w)
+            : (this.moveStart / this.w) - (event.pageX / this.w);
 
             if(this.moving) {
                 console.log(this.moveDelta);
