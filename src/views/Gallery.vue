@@ -20,6 +20,9 @@
         :labels="labels" 
         :colors="[]"
 
+        :outerCorners="outer"
+        :innerCorners="inner"
+
         ></component>
     </div>
 
@@ -226,16 +229,20 @@
 import Vue from 'vue'
 import DonutDrawing from '../components/DonutDrawing.vue';
 import DonutInputs from '../components/DonutInputs.vue';
+import PlanDrawing from '../components/PlanDrawing.vue';
+import PlanInputs from '../components/PlanInputs.vue';
 
 export default Vue.extend({
     components: {
         DonutDrawing,
-        DonutInputs
+        DonutInputs,
+        PlanDrawing,
+        PlanInputs
     },
     data() {
         return {
-            drawings: ["donut", "other", "third", "long", "longer"],       
-            currentTab: "donut",
+            drawings: ["donut", "plan"],       
+            currentTab: "plan",
             w: 0, 
             touchStart: 0,
             touchDelta: 0,
@@ -246,10 +253,7 @@ export default Vue.extend({
             ],
             titles: {
                 donut: "donut",
-                other: "other",
-                third: "third",
-                long: "really long title",
-                longer: "really really really really long title"
+                plan: "square plan",
             },
             descriptions: {
                 donut: "two color states"
@@ -262,6 +266,8 @@ export default Vue.extend({
                 'CIRCULATE'
             ],
             selectedTags: [] as string[],
+            outer: [.7, .9, .3, .9, .3, .1, .7, .1],
+            inner: [.55, .7, .45, .7, .45, .3, .55, .3]
         }
     },
     mounted() {
