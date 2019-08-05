@@ -34,19 +34,30 @@
     fill: black !important;
 }
 
+.interior:hover {
+    fill: grey !important;
+}
+
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import PlanBuilder from './PlanBuilder';
-import { SvgarDrawing } from 'svgar/dist/models/schema/drawing/Drawing';
+import { SvgarDrawing, Drawing } from 'svgar/dist/models/schema/drawing/Drawing';
 
 export default Vue.extend({
     name: "plan-drawing",
     props: ["size", "planState", "outerCorners", "innerCorners"],
+    data() {
+        return {
+            drawing: {} as Drawing,
+        }
+    },
     computed: {
         svgar() : SvgarDrawing {
-            return new PlanBuilder(this.outerCorners, this.innerCorners).Build().ToSvg(this.planState, this.size, this.size);
+            let dwg = new PlanBuilder(this.outerCorners, this.innerCorners).Build();
+            this.drawing = dwg;
+            return dwg.ToSvg(this.planState, this.size, this.size);
         }
     },
     methods: {

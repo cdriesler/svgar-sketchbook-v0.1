@@ -27,8 +27,33 @@ export default class PlanBuilder {
         let innerLayer = new Layer("inner wall");
         let controlArrows = new Layer("control arrows").AddTag("arrow");
 
-        let arrowOffset = 0.01;
+        let wallFills = new Layer("wall fills").AddTag("fill");
+        let wallOutlines = new Layer("wall outlines").AddTag("outline");
+        let interior = new Layer("interior").AddTag("interior");
+        let courtyard = new Layer("courtyard").AddTag("courtyard");
+
+        let ic = this.InnerCorners;
+        courtyard.AddGeometry(
+            new PolylineBuilder([ic[0], ic[1]])
+            .LineTo([ic[2], ic[3]])
+            .LineTo([ic[4], ic[5]])
+            .LineTo([ic[6], ic[7]])
+            .LineTo([ic[0], ic[1]])
+            .Build())
+
+        let oc = this.OuterCorners;
+        interior.AddGeometry(
+            new PolylineBuilder([oc[0], oc[1]])
+            .LineTo([oc[2], oc[3]])
+            .LineTo([oc[4], oc[5]])
+            .LineTo([oc[6], oc[7]])
+            .LineTo([oc[0], oc[1]])
+            .Build().AddTag("interior"))
+        
+
+        let arrowOffset = 0.025;
         let arrowSize = 0.02;
+        let wallThickness = 0.02;
 
         // Draw outer and inner wall lines
         for(let i = 0; i < 8; i+=2) {
@@ -37,7 +62,7 @@ export default class PlanBuilder {
             let bXi = i == 6 ? 0 : i + 2;
             let bYi = i == 6 ? 1 : i + 3;
 
-            // Outer wall
+            // Outer wall control
             let oXa = this.OuterCorners[aXi];
             let oYa = this.OuterCorners[aYi];
             let oXb = this.OuterCorners[bXi];
@@ -47,7 +72,7 @@ export default class PlanBuilder {
                 new PolylineBuilder([oXa, oYa]).LineTo([oXb, oYb]).Build().AddTags(["outer", "wall-line", titles[i / 2]])
             );
 
-            // Inner wall
+            // Inner wall control
             let iXa = this.InnerCorners[aXi];
             let iYa = this.InnerCorners[aYi];
             let iXb = this.InnerCorners[bXi];
@@ -63,8 +88,47 @@ export default class PlanBuilder {
             let oPt = [(oXa + oXb) / 2, (oYa + oYb) / 2];
             let iPt = [(iXa + iXb) / 2, (iYa + iYb) / 2];
 
+            let wt = wallThickness;
+
             if (i == 0 || i == 4) {
                 // Horizontal segment
+
+                if (i == 0) {
+                    // Top segment
+
+                    let outerWall = new PolylineBuilder([oXa + wt, oYa + (wt * 0.5)])
+                        .HorizontalTo(oXb - wt)
+                        .VerticalTo(oYb - (wallThickness * 0.5))
+                        .HorizontalTo(oXa + wt)
+                        .LineTo([oXa + wt, oYa + (wt * 0.5)]).Build();
+
+                    let innerWall = new PolylineBuilder([iXa + wt, iYa + (wt * 0.5)])
+                        .HorizontalTo(iXb - wt)
+                        .VerticalTo(iYb - (wallThickness * 0.5))
+                        .HorizontalTo(iXa + wt)
+                        .LineTo([iXa + wt, iYa + (wt * 0.5)]).Build();
+
+                    wallFills.AddGeometries([outerWall, innerWall]);
+                    wallOutlines.AddGeometries([outerWall, innerWall]);
+                }
+                else {
+                    // Bottom segment
+
+                    let outerWall = new PolylineBuilder([oXa - wt, oYa + (wt * 0.5)])
+                        .HorizontalTo(oXb + wt)
+                        .VerticalTo(oYb - (wallThickness * 0.5))
+                        .HorizontalTo(oXa - wt)
+                        .LineTo([oXa - wt, oYa + (wt * 0.5)]).Build();
+
+                    let innerWall = new PolylineBuilder([iXa - wt, iYa + (wt * 0.5)])
+                        .HorizontalTo(iXb + wt)
+                        .VerticalTo(iYb - (wallThickness * 0.5))
+                        .HorizontalTo(iXa - wt)
+                        .LineTo([iXa - wt, iYa + (wt * 0.5)]).Build();
+
+                    wallFills.AddGeometries([outerWall, innerWall]);
+                    wallOutlines.AddGeometries([outerWall, innerWall]);
+                }
 
                 // Outer edge arrows
                 let outerTopPoints = [
@@ -149,6 +213,43 @@ export default class PlanBuilder {
             else {
                 // Vertical segment
 
+                if (i == 2) {
+                    // Left segment
+
+                    let outerWall = new PolylineBuilder([oXa - (wt * 0.5), oYa + wt])
+                        .HorizontalTo(oXa + (wt * 0.5))
+                        .VerticalTo(oYb - wt)
+                        .HorizontalTo(oXa - (wt * 0.5))
+                        .LineTo([oXa - (wt * 0.5), oYa + wt]).Build();
+
+                    let innerWall = new PolylineBuilder([iXa - (wt * 0.5), iYa + wt])
+                        .HorizontalTo(iXa + (wt * 0.5))
+                        .VerticalTo(iYb - wt)
+                        .HorizontalTo(iXa - (wt * 0.5))
+                        .LineTo([iXa - (wt * 0.5), iYa + wt]).Build();
+
+                    wallFills.AddGeometries([outerWall, innerWall]);
+                    wallOutlines.AddGeometries([outerWall, innerWall]);
+                }
+                else {
+                    // Right segment
+
+                    let outerWall = new PolylineBuilder([oXa + (wt * 0.5), oYa - wt])
+                        .HorizontalTo(oXa - (wt * 0.5))
+                        .VerticalTo(oYb + wt)
+                        .HorizontalTo(oXa + (wt * 0.5))
+                        .LineTo([oXa + (wt * 0.5), oYa - wt]).Build();
+
+                    let innerWall = new PolylineBuilder([iXa + (wt * 0.5), iYa - wt])
+                        .HorizontalTo(iXa - (wt * 0.5))
+                        .VerticalTo(iYb + wt)
+                        .HorizontalTo(iXa + (wt * 0.5))
+                        .LineTo([iXa + (wt * 0.5), iYa - wt]).Build();
+
+                    wallFills.AddGeometries([outerWall, innerWall]);
+                    wallOutlines.AddGeometries([outerWall, innerWall]);
+                }
+
                 // Outer edge arrows
                 let outerRightPoints = [
                     oPt[0],
@@ -231,7 +332,14 @@ export default class PlanBuilder {
             }
         }
 
-        Plan.AddLayer(outerLayer).AddLayer(innerLayer).AddLayer(controlArrows);
+        Plan
+        .AddLayer(outerLayer)
+        .AddLayer(innerLayer)
+        .AddLayer(controlArrows)
+        .AddLayer(wallFills)
+        .AddLayer(wallOutlines)
+        .AddLayer(courtyard)
+        .AddLayer(interior);
 
         // Build states
         Plan
@@ -249,19 +357,61 @@ export default class PlanBuilder {
                 .Stroke("#000000")
                 .StrokeWidth("2px").Build()
             ).Target("arrow-control", "arrow")
+            .AddStyle(
+                new StyleBuilder("wall-fills")
+                .Fill("#ffffff")
+                .FillOpacity(0.5)
+                .StrokeWidth("0px").Build()
+            ).Target("wall-fills", "fill")
+            .AddStyle(
+                new StyleBuilder("wall-outlines")
+                .Fill("none")
+                .Stroke("dcdcdc")
+                .StrokeWidth("4px").Build()
+            ).Target("wall-outlines", "outline")
+            .BringToFront("fill")
+            .BringToFront("wall-line")
+            .Hide("courtyard")
+            .Hide("interior")
         )
         .AddState(
             new State("view")
             .AddStyle(
-                new StyleBuilder("walls")
+                new StyleBuilder("wall-fills")
+                .Fill("#ffffff")
+                .StrokeWidth("0px").Build()
+            ).Target("wall-fills", "fill")
+            .AddStyle(
+                new StyleBuilder("wall-outlines")
+                .Fill("none")
+                .Stroke("000000")
+                .StrokeWidth("4px").Build()
+            ).Target("wall-outlines", "outline")
+            .AddStyle(
+                new StyleBuilder("wall-control")
                 .Stroke("#000000")
-                .StrokeWidth("2px").Build()
-            ).Target("walls", "wall-line").Hide("arrow")
+                .StrokeWidth("0px").Build()
+            ).Target("wall-control", "wall-line").Hide("arrow")
             .AddStyle(
                 new StyleBuilder("controls")
                 .Fill("none")
                 .StrokeWidth("0px").Build()
             ).Target("controls", "arrow")
+            .AddStyle(
+                new StyleBuilder("courtyard")
+                .Fill("#ffffff")
+                .StrokeWidth("0px").Build()
+            ).Target("courtyard", "courtyard")
+            .AddStyle(
+                new StyleBuilder("interior")
+                .Fill("#dcdcdc")
+                .StrokeWidth("0px").Build()
+            ).Target("interior", "interior")
+            .BringToFront("outline")
+            .BringToFront("fill")
+            .SendToBack("interior")
+            .SendToBack("courtyard")
+            
         );
 
         return Plan;
