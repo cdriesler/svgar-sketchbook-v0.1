@@ -19,6 +19,7 @@
             :class="tagsToClasses(geo.tags)"
             @mousedown="onMouseDown($event, geo.tags)"
             @mousemove="onMouseMove($event, geo.tags)"
+            @mouseleave="onMouseUp($event, geo.tags)"
             @mouseup="onMouseUp($event, geo.tags)">
             </path>
         </g>

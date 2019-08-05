@@ -1,5 +1,5 @@
 <template>
-<div class="gallery">
+<div class="gallery" @keydown.esc="onCancel">
     <div class="canvas" @resize="onResize()">
     <div 
     ref="svgar" 
@@ -25,6 +25,7 @@
         @startmove="onStartMove"
         @endmove="onEndMove"
         @move="onMove"
+        
 
         ></component>
     </div>
@@ -51,6 +52,7 @@
         :is="currentInputComponent"
         :selected="selectedIndex"
         @update="onInputUpdate"
+        @reset="onReset"
         > </component>
     </div>
 </div>
@@ -381,34 +383,41 @@ export default Vue.extend({
         onDrawingSelection(tags: string[]) : void {
             this.selectedTags = tags;
         },
+        onCancel() : void {
+            console.log("PLEASE STOP");
+            this.moving = false;
+        },
+        onReset() : void {
+            this.moving = false;
+            this.outer = [.7, .9, .3, .9, .3, .1, .7, .1];
+            this.inner = [.55, .7, .45, .7, .45, .3, .55, .3];
+        },
         onStartMove(event: any, tags: string[]) : void {
             // Get extents of canvas in pixel dimensions so delta can be normalized
             this.offsetLeft = event.path[3].offsetLeft;
             this.offsetTop = event.path[3].offsetTop;
 
-            this.moveDirection = tags.includes("bottom") || tags.includes("top") ? "Y" : "X";
-            this.moveTarget = tags.includes("outer") ? "outer" : "inner";
-
-            this.moveStart = this.moveDirection == "Y" ? event.pageY : event.pageX;
-            this.moveDelta = 0;
-
             // Identify coordinates to modify.
-            if(tags.includes("top")) {
+            if(tags.includes("first")) {
                 this.moveIndex = [1, 3];
             }
-            if(tags.includes("bottom")) {
+            if(tags.includes("third")) {
                 this.moveIndex = [5, 7];
             }
-            if(tags.includes("left")) {
+            if(tags.includes("second")) {
                 this.moveIndex = [2, 4];
             }
-            if(tags.includes("right")) {
+            if(tags.includes("fourth")) {
                 this.moveIndex = [0, 6];
             }
 
+            this.moveDirection = tags.includes("bottom") || tags.includes("top") ? "Y" : "X";
+            this.moveTarget = tags.includes("outer") ? "outer" : "inner";
+
+            this.moveDelta = 0;
+            this.moveStart = this.moveDirection == "Y" ? event.pageY : event.pageX;
+
             this.moving = true;
-            
-            console.log("START: " + this.moveStart);
         },
         onEndMove(event: any, tags: string[]) : void {
             // Commit move to data and clear delta;
@@ -424,10 +433,9 @@ export default Vue.extend({
                 })
             }
 
-            this.moving = false;
+            this.moveIndex = [];
             this.moveDelta = 0;
-
-            console.log("END: " + tags);
+            this.moving = false;
         },
         onMove(event: any) : void {
             //console.log(event);
@@ -435,10 +443,6 @@ export default Vue.extend({
             this.moveDelta = this.moveDirection == "Y" 
             ? (this.moveStart / this.w) - (event.pageY / this.w)
             : (this.moveStart / this.w) - (event.pageX / this.w);
-
-            if(this.moving) {
-                console.log(this.moveDelta);
-            }
         }
     },
     beforeDestroy: function () {

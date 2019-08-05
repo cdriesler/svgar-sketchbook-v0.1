@@ -58,6 +58,8 @@ export default class PlanBuilder {
             );
 
             // Control arrows
+            // ( Chuck ) I am about to violate DRY to an uncomfortable degree
+            // ( Chuck ) Alternatively: TODO: Not this
             let oPt = [(oXa + oXb) / 2, (oYa + oYb) / 2];
             let iPt = [(iXa + iXb) / 2, (iYa + iYb) / 2];
 
@@ -103,6 +105,46 @@ export default class PlanBuilder {
                     new PolylineBuilder([oB[0], oB[1]]).LineTo([oB[2], oB[3]]).LineTo([oB[4], oB[5]]).LineTo([oB[6], oB[7]])
                     .Build().AddTags(["outer", "bottom", "arrow", titles[i / 2]])
                 ]);
+
+                // Inner edge arrows
+                let innerTopPoints = [
+                    iPt[0] + arrowSize,
+                    iPt[1],
+                    iPt[0],
+                    iPt[1] + arrowSize,
+                    iPt[0] - arrowSize,
+                    iPt[1],
+                    iPt[0] + arrowSize,
+                    iPt[1]
+                ]
+
+                let innerBottomPoints = [
+                    iPt[0] + arrowSize,
+                    iPt[1],
+                    iPt[0],
+                    iPt[1] - arrowSize,
+                    iPt[0] - arrowSize,
+                    iPt[1],
+                    iPt[0] + arrowSize,
+                    iPt[1]
+                ]
+
+                // Apply offset
+                for(let j = 1; j < 8; j+=2) {
+                    innerTopPoints[j] = innerTopPoints[j] + arrowOffset;
+                    innerBottomPoints[j] = innerBottomPoints[j] - arrowOffset;
+                }
+
+                let iT = innerTopPoints;
+                let iB = innerBottomPoints;
+
+                // Build geometry
+                controlArrows.AddGeometries([
+                    new PolylineBuilder([iT[0], iT[1]]).LineTo([iT[2], iT[3]]).LineTo([iT[4], iT[5]]).LineTo([iT[6], iT[7]])
+                    .Build().AddTags(["inner", "top", "arrow", titles[i / 2]]),
+                    new PolylineBuilder([iB[0], iB[1]]).LineTo([iB[2], iB[3]]).LineTo([iB[4], iB[5]]).LineTo([iB[6], iB[7]])
+                    .Build().AddTags(["inner", "bottom", "arrow", titles[i / 2]])
+                ]);
             }
             else {
                 // Vertical segment
@@ -113,7 +155,7 @@ export default class PlanBuilder {
 
         // Build states
         Plan.AddState(
-            new State("default")
+            new State("control")
             .AddStyle(
                 new StyleBuilder("wall-control")
                 .Fill("#000000")
