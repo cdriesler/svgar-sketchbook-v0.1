@@ -1,108 +1,55 @@
 <template>
-<div id="gallery">
+<div id="gallery-wrapper">
     <div class="search">
         <div class="search__prompt">
             search: 
         </div>
         <input type="text" v-model="query" />
     </div>
-    <div class="tabs">
-        <div v-for="category in categories" :key="category.name" class="tabs__category">
-            <div class="tabs__category__label">
-                <div class="tabs__category__label__text">
-                    <span style="background: white; font-size: 10px">
-                        {{category.name}}&nbsp;
-                    </span>
-                </div>
-            </div>
-            <div class="tabs__category__drawings">
-                <div v-for="drawing in category.drawings" :key="category + '_' + drawing" class="tabs__category__drawings__icon">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--
     <div class="gallery">
-        <div class="selectors">
-            <div v-for="category in categories" :key="category" class="category">
-                {{category}}
+        <div class="gallery__active_icon">
+            <div class="gallery__active_icon__main">
             </div>
-            <div 
-            v-for="drawing in 200" 
-            v-bind:key="drawing"
-            @click="currentTab = drawing"
-            :class="{'selectors--active' : currentTab === drawing }" 
-            v-show="drawing.toString().indexOf(query) >= 0 || query == ''">
-                <div class="selectors__nib" :class="{'selectors__nib--active' : currentTab === drawing }">
-                    <div class="component" ref="svgar" v-if="currentTab === drawing">
 
-                        <div class="fill">{{drawing}}</div>   
-                        <div v-if="settingsOn" class="settings"> </div>     
-                    </div>
-                </div>
+            <div class="gallery__active_icon__right_toggle">
+            <div class="gallery__active_icon__right_toggle__button">
+                <div class="gallery__active_icon__right_toggle__button__text" @click="onToggleTray">{{trayIcon}}</div>
+            </div>
+            </div>
+
+
+            <div class="gallery__active_icon__bottom_toggle">
+            </div>
+
+            <div class="gallery__active_icon__elbow">
+            </div>
+        </div>
+        <div class="gallery__layer_viewer">
+            
+        </div>
+        <div class="gallery__body">
+            <div class="gallery__body__tabs" v-if="trayOpen" >
+            </div>
+            <div class="gallery__body__view">
+                    <div style="width: 50px; height: 1000px; outline: 2px solid black; outline-offset: -5px;"/>
+     
             </div>
         </div>
     </div>
-    -->
 </div>
-
-    <!--
-        @click="currentTab = drawing"
-    <div class="canvas" @resize="onResize()">
-    <div 
-    ref="svgar" 
-    class="svgar"
-    >
-
-    </div>
-    -->
 </template>
 
-<!-- old structure
-        <component
-        v-if="w > 0"
-        
-        class="svgar--enter"
-
-        :is="currentDrawingComponent"
-        :size="+w"
-        :state="state" 
-        :planState="planState"
-        :selected="selectedTags"     
-        @selection="onDrawingSelection"
-
-        :values="valueNumbers" 
-        :labels="labels" 
-        :colors="[]"
-
-        :outerCorners="outerCornerPts"
-        :innerCorners="innerCornerPts"
-        @startmove="onStartMove"
-        @endmove="onEndMove"
-        @move="onMove"
-        
-
-        ></component>
-
-            <div class="inputs">
-        <div class="inputs__header">
-            <span class="inputs__header__title">{{currentTab}}</span>
-            <span class="inputs__header__description">&nbsp;:&nbsp;{{descriptions[currentTab]}}</span>
-        </div>
-        <component
-        :is="currentInputComponent"
-        :selected="selectedIndex"
-        @update="onInputUpdate"
-        @reset="onReset"
-        @updateState="onUpdatePlanState"
-        > </component>
-    </div>
--->
 
 <style>
-#gallery {
+#gallery-wrapper {
     width: 100%;
     height: 100%;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .search {
@@ -111,34 +58,12 @@
 
     border-bottom: 2px solid black;
 
+    margin-bottom: 10px;
+
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-}
-
-.filter__search {
-    height: 16px;
-
-    margin-left: 15px;
-
-    font-size: 10px;
-    line-height: 16px;
-    vertical-align: middle;
-    text-align: left;
-
-    border-right: 2px solid black;
-}
-
-.filter__search:hover {
-    background: gainsboro;
-}
-
-.search__prompt {
-    line-height: 20px;
-    margin-left: 10px;
-    vertical-align: middle;
-    font-size: 10px;
 }
 
 .search input {
@@ -154,307 +79,168 @@
     outline: none;
 }
 
-.tabs {
-    width: 100%;
-    height: 82px;
-    
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    
-    overflow-x: auto;
-
-    margin-bottom: 10px;
-}
-
-.tabs__category {
-    height: 100%;
-
-    display: grid;
-    grid-template-rows: 60px 20px;
-}
-
-.tabs__category__label {
-    grid-row: 2 / span 1;
-
-    height: 12px;
-    border-bottom: 2px solid black;
-    width: calc(100% - 10px);
-}
-
-.tabs__category__label__text {
-    line-height: 23px;
-    font-size: 10px;
-    vertical-align: middle;
-
-    flex-grow: 0;
-
+.search__prompt {
+    line-height: 20px;
     margin-left: 10px;
-}
-
-.tabs__category__drawings {
-    grid-row: 1 / span 1;
-
-    height: 50px;
-    margin-top: 10px;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.tabs__category__drawings__icon {
-    width: 48px;
-    height: 48px;
-
-    border: 2px solid black;
-
-    margin-right: 10px;
+    vertical-align: middle;
+    font-size: 10px;
 }
 
 .gallery {
     width: 100%;
-    height: calc(100% - 30px);
+    flex-grow: 1;
+
+    display: grid;
+    grid-template-rows: 62px 1fr;
+    grid-template-columns: 62px 1fr;
 }
 
-.category {
+.gallery__active_icon {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+
+    width: 62px;
+    max-width: 62px;
+    height: 62px;
+
+    display: grid;
+    grid-template-rows: 50px 12px;
+    grid-template-columns: 50px 12px;
+}
+
+.gallery__active_icon__main {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+
     width: calc(100% - 4px);
     height: calc(100% - 4px);
-    border-radius: 30px;
-    border: 2px solid black;
-}
-
-.canvas {
-    width: calc(100vw - 60px);
-    max-width: 500px;
-}
-
-.svgar {
-    width: 100%;
-    height: calc(100vw - 60px);
-    max-height: 500px;
 
     border: 2px solid black;
-    outline: 1px solid white;
-
-    box-shadow: 5px 5px 0 0 black;
-
-    overflow: hidden;
 }
 
-.svgar--enter {
-    animation-name: enter;
-    animation-duration: 0.5s;
+.gallery__active_icon__right_toggle {
+    grid-row: 1 / span 1;
+    grid-column: 2 / span 1;
+
+    width: 12;
+    max-width: 12;
+    height: 100%;
+
+    border-right: 2px solid black;
+}
+
+.gallery__active_icon__right_toggle:hover {
+    cursor: pointer;
+
+    animation-name: hint;
+    animation-duration: 0.75s;
     animation-fill-mode: forwards;
-    animation-timing-function: ease;
 }
 
-@keyframes enter {
+@keyframes hint {
     from {
-        transform: translate(500px, 0);
+        transform: translateX(0);
     }
     to {
-        transform: translate(0, 0);
+        transform: translateX(5px);
     }
 }
 
-.selectors {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    grid-auto-rows: 1fr;
-    grid-gap: 10px;
-    grid-auto-flow: dense;
-}
+.gallery__active_icon__right_toggle__button {
+    grid-row: 1 / span 1;
+    grid-column: 2 / span 1;
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+    font-size: 18px;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align: left;
+    text-indent: 0;
 
-.selectors::before {
-    content: '';
-    width: 0;
-    padding-bottom: 100%;
-    grid-row: 1 / 1;
-    grid-column: 1 / 1;
-}
+    transform: translateY(20px);
 
-.selectors > *:first-child {
-    grid-row: 1 / 1;
-    grid-column: 1 / 1;
-}
+    font-weight: bold;
 
-.selectors--active {
-    grid-row: span 4;
-    grid-column: span 4;
-}
-
-@keyframes grow_grid {
-    0% {
-        grid-row: span 1;
-        grid-column: span 1;
-    }
-    80% {
-        grid-row: span 1;
-        grid-column: span 1;
-
-    }
-    100% {
-        grid-row: span 4;
-        grid-column: span 4;       
-    }
-}
-
-@media screen and (min-width: 900px) {
-    .selectors--active {
-        grid-row: span 8;
-        grid-column: span 8;
-    }   
-
-    @keyframes grow_grid {
-        0% {
-            grid-row: span 1;
-            grid-column: span 1;
-        }
-        80% {
-            grid-row: span 1;
-            grid-column: span 1;
-
-        }
-        100% {
-            grid-row: span 8;
-            grid-column: span 8;       
-        }
-    }
-}
-
-.selectors::-webkit-scrollbar {
-  display: none;
-}
-
-.selectors__nib {
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
-
-    z-index: 5;
     background: white;
-
-    border: 2px solid black;
-}
-
-.selectors__nib:hover:not(.selectors__nib--active) {
-    cursor: pointer;
-}
-
-.selectors__nib--active {
     z-index: 10;
 }
 
-@keyframes grow_nib {
-    0% {
-        width: calc(100% - 4px);
-        height: calc(100% - 4px);
-
-        z-index: 10;
-        background: white;
-    }
-    74.99% {
-        width: 300%;
-        height: 300%;
-    }
-    75% {
-        width: 75%;
-        height: 75%;
-    }
-    100% {
-        width: calc(100% - 4px);
-        height: calc(100% - 4px);
-    }
+.gallery__active_icon__right_toggle__button__text {
+    transform: translate(5.5px, -1.5px); 
+    font-size: 18px;
 }
 
-.settings {
-    width: calc(100% - 4px);
-    height: 20px;
+.gallery__active_icon__bottom_toggle {
+    grid-row: 2 / span 1;
+    grid-column: 1 / span 1;
+
+    width: 100%;
+    height: calc(100% - 2px);
+
     border-bottom: 2px solid black;
+}
+
+.gallery__active_icon__elbow {
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
+
+    width: calc(100% - 3px);
+    height: calc(100% - 3px);
+
     border-right: 2px solid black;
-    border-left: 2px solid black;
-    background: white;
-
-    animation-name: open_settings;
-    animation-duration: 0.75s;
-    animation-timing-function: linear;
-}
-
-@keyframes open_settings {
-    from {
-        height: 0;
-    }
-    to {
-        
-    }
-}
-
-.component {
-    width: 100%;
-    height: 100%;
-}
-
-.fill {
-    height: 100%;
-}
-
-@keyframes drop-button {
-    from {
-        transform: translate(0, 0);
-        box-shadow: 4px 4px 0 0 black;
-    }
-    to {
-        transform: translate(4px, 4px);
-        box-shadow: 0px 0px 0 0 white;
-    }
-}
-
-.arrow:hover {
-    cursor: pointer;
-    fill: black;
-}
-
-.inputs {
-    flex-grow: 1;
-    padding-left: 20px;
-    padding-right: -10px;
-    max-width: calc(100vw - 30px);
-    min-width: 150px;
-
-    overflow-x: visible;
-    white-space: nowrap;
-    text-overflow: clip;
-}
-
-@media screen and (max-width: 500px) {
-    .inputs {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-
-}
-
-.inputs__header {
-    border-top: 2px solid black;
     border-bottom: 2px solid black;
-    font-size: 12px;
-    line-height: 30px;
+
+    margin-left: 1px;
+    margin-top: 1px;
+}
+
+.gallery__layer_viewer {
+    grid-row: 2 / span 1;
+    grid-column: 1 / span 1;
+
+    width: calc(100% - 2px);
+    height: calc(100% - 20px);
+
+    border-right: 2px solid black;
+
+    margin-top: 10px;
+}
+
+.gallery__body {
+    grid-row: 1 / span 2;
+    grid-column: 2 / span 1;
     width: 100%;
-
-    margin-bottom: 10px;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-.inputs__header__title {
+.gallery__body__tabs {
+    height: 60px;
+    min-height: 60px;
+    width: calc(100% - 10px);
+
     margin-left: 10px;
-    font-size: 12px;
-    font-weight: bold;
+
+    border-bottom: 2px solid black;
 }
 
-.inputs__header__description {
-    font-size: 12px;
+.gallery__body__view {
+    width: calc(100% - 10px);
+    margin-top: 10px;
+    margin-left: 10px;
+
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    float: left;
+
 }
+
 </style>
 
 <script lang="ts">
@@ -492,11 +278,13 @@ export default Vue.extend({
                         "circles"
                     ]
                 },
-            ],
-            drawings: ["donut", "plan", "third", "fourth"],       
+            ],      
             currentTab: "",
             w: 0, 
             query: "",
+            trayIcon: "+",
+            trayOpen: true,
+
             touchStart: 0,
             touchDelta: 0,
             settingsOn: false,
@@ -538,7 +326,6 @@ export default Vue.extend({
         this.w = canvas.clientWidth;
 
         window.addEventListener('resize', this.onResize);
-
     },
     computed: {
         currentDrawingComponent() : string {
@@ -606,20 +393,6 @@ export default Vue.extend({
         onResize() : void {
             this.w = (<Element>this.$refs.svgar).clientWidth;
             console.log("Resize!");
-        },
-        onGetSettings() : void {
-            this.settingsOn = !this.settingsOn;
-        },
-        onSwipeLeft() : void {
-            this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) + 1) % this.drawings.length];
-        },
-        onSwipeRight() : void { 
-            if (this.currentTab == this.drawings[0]) {
-                this.currentTab = this.drawings[this.drawings.length - 1];
-            }
-            else {
-                this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) - 1) % this.drawings.length];
-            }     
         },
         startHandler(event: any) : void {
             this.touchStart = event.touches[0].pageX;
