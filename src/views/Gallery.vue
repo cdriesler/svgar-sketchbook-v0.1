@@ -1,24 +1,33 @@
 <template>
-<div class="gallery">
-    <div class="selectors">
-        <div class="search" id="first">
-            search
+<div id="gallery">
+    <div class="search">
+        <div class="search__prompt">
+            search: 
         </div>
-        <div 
-        v-for="drawing of drawings" 
-        v-bind:key="drawing"
-        @click="currentTab = drawing"
-        :class="{'selectors--active' : currentTab === drawing }" >
-            <div class="selectors__nib" :class="{'selectors__nib--active' : currentTab === drawing }">
-                <div class="component" ref="svgar" v-if="currentTab === drawing">
+        <input type="text" v-model="query" />
+    </div>
+    <div class="gallery">
+        <div class="selectors">
+            <div class="random" id="first">
+                ?
+            </div>
+            <div 
+            v-for="drawing in 200" 
+            v-bind:key="drawing"
+            @click="currentTab = drawing"
+            :class="{'selectors--active' : currentTab === drawing }" 
+            v-show="drawing.toString().indexOf(query) >= 0 || query == ''">
+                <div class="selectors__nib" :class="{'selectors__nib--active' : currentTab === drawing }">
+                    <div class="component" ref="svgar" v-if="currentTab === drawing">
 
-                    <div class="fill">{{drawing}}</div>   
-                    <div v-if="settingsOn" class="settings"> </div>     
+                        <div class="fill">{{drawing}}</div>   
+                        <div v-if="settingsOn" class="settings"> </div>     
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+</div>
 
     <!--
         @click="currentTab = drawing"
@@ -30,9 +39,6 @@
 
     </div>
     -->
-
-
-</div>
 </template>
 
 <!-- old structure
@@ -77,14 +83,52 @@
 -->
 
 <style>
-.gallery {
+#gallery {
     width: 100%;
     height: 100%;
-
-    padding-top: 10px;
 }
 
 .search {
+    width: 100%;
+    height: 20px;
+
+    margin-bottom: 10px;
+
+    border-bottom: 2px solid black;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.search__prompt {
+    line-height: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    font-size: 10px;
+}
+
+.search input {
+    height: 20px;
+    border: none;
+    background: none;
+    flex-grow: 1;
+
+    font-size: 10px;
+}
+
+.search input:focus {
+    outline: none;
+}
+
+.gallery {
+    width: 100%;
+    height: calc(100% - 30px);
+}
+
+.random {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
     border-radius: 30px;
@@ -153,12 +197,13 @@
 
 @keyframes grow_grid {
     0% {
-        grid-row: span 2;
-        grid-column: span 2;
+        grid-row: span 1;
+        grid-column: span 1;
     }
-    50% {
-        grid-row: span 3;
-        grid-column: span 3;
+    80% {
+        grid-row: span 1;
+        grid-column: span 1;
+
     }
     100% {
         grid-row: span 4;
@@ -174,16 +219,13 @@
 
     @keyframes grow_grid {
         0% {
-            grid-row: span 2;
-            grid-column: span 2;
+            grid-row: span 1;
+            grid-column: span 1;
         }
-        33% {
-            grid-row: span 4;
-            grid-column: span 4;
-        }
-        66% {
-            grid-row: span 6;
-            grid-column: span 6;
+        80% {
+            grid-row: span 1;
+            grid-column: span 1;
+
         }
         100% {
             grid-row: span 8;
@@ -200,6 +242,9 @@
     width: calc(100% - 4px);
     height: calc(100% - 4px);
 
+    z-index: 5;
+    background: white;
+
     border: 2px solid black;
 }
 
@@ -209,7 +254,28 @@
 
 .selectors__nib--active {
     z-index: 10;
-    background: white;
+}
+
+@keyframes grow_nib {
+    0% {
+        width: calc(100% - 4px);
+        height: calc(100% - 4px);
+
+        z-index: 10;
+        background: white;
+    }
+    74.99% {
+        width: 300%;
+        height: 300%;
+    }
+    75% {
+        width: 75%;
+        height: 75%;
+    }
+    100% {
+        width: calc(100% - 4px);
+        height: calc(100% - 4px);
+    }
 }
 
 .settings {
@@ -241,17 +307,6 @@
 
 .fill {
     height: 100%;
-}
-
-@keyframes grow_nib {
-    from {
-        width: 50px;
-        height: 50px;
-    }
-    to {
-        width: 100%;
-        height: 100%;
-    }
 }
 
 @keyframes drop-button {
@@ -326,6 +381,7 @@ export default Vue.extend({
             drawings: ["donut", "plan", "third", "fourth"],       
             currentTab: "",
             w: 0, 
+            query: "",
             touchStart: 0,
             touchDelta: 0,
             settingsOn: false,
