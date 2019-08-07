@@ -1,22 +1,23 @@
 <template>
 <div id="gallery">
-    <div class="filter">
-        <div class="filter__search">
-search
-        </div>
+    <div class="search">
         <div class="search__prompt">
             search: 
         </div>
         <input type="text" v-model="query" />
     </div>
-    <div class="icons">
-        <div v-for="category in categories" :key="category.name" class="icons__category">
-            <div class="icons__category__label">
-                <div class="icons__category__label__text">
-                {{category.name}}&nbsp;
-                </div>   
+    <div class="tabs">
+        <div v-for="category in categories" :key="category.name" class="tabs__category">
+            <div class="tabs__category__label">
+                <div class="tabs__category__label__text">
+                    <span style="background: white; font-size: 10px">
+                        {{category.name}}&nbsp;
+                    </span>
+                </div>
             </div>
-            <div v-for="drawing in category.drawings" :key="category + '_' + drawing" class="icons__category__drawing">
+            <div class="tabs__category__drawings">
+                <div v-for="drawing in category.drawings" :key="category + '_' + drawing" class="tabs__category__drawings__icon">
+                </div>
             </div>
         </div>
     </div>
@@ -104,7 +105,7 @@ search
     height: 100%;
 }
 
-.filter {
+.search {
     width: 100%;
     height: 20px;
 
@@ -142,9 +143,9 @@ search
 
 .search input {
     height: 20px;
+    width: 100px;
     border: none;
     background: none;
-    flex-grow: 1;
 
     font-size: 10px;
 }
@@ -153,9 +154,9 @@ search
     outline: none;
 }
 
-.icons {
+.tabs {
     width: 100%;
-    height: 52px;
+    height: 82px;
     
     display: flex;
     flex-direction: row;
@@ -164,42 +165,53 @@ search
     
     overflow-x: auto;
 
-    margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.icons__category {
+.tabs__category {
+    height: 100%;
+
+    display: grid;
+    grid-template-rows: 60px 20px;
+}
+
+.tabs__category__label {
+    grid-row: 2 / span 1;
+
+    height: 12px;
+    border-bottom: 2px solid black;
+    width: calc(100% - 10px);
+}
+
+.tabs__category__label__text {
+    line-height: 23px;
+    font-size: 10px;
+    vertical-align: middle;
+
+    flex-grow: 0;
+
+    margin-left: 10px;
+}
+
+.tabs__category__drawings {
+    grid-row: 1 / span 1;
+
     height: 50px;
+    margin-top: 10px;
 
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
-    margin-right: 10px;
 }
 
-.icons__category__label {
-    height: 50px;
-    text-align: left;
-    padding: 0;
-    margin: 0;
-    border-left: 4px solid black;
-    border-right: 4px solid black;
-}
-
-.icons__category__label__text {
-    line-height: 48px;
-    vertical-align: middle;
-}
-
-.icons__category__drawing {
+.tabs__category__drawings__icon {
     width: 48px;
     height: 48px;
 
     border: 2px solid black;
 
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .gallery {
@@ -472,7 +484,15 @@ export default Vue.extend({
                         "align",
                         "split"
                     ]
-                }],
+                },
+                {
+                    name: "patterns",
+                    drawings: [
+                        "triangles",
+                        "circles"
+                    ]
+                },
+            ],
             drawings: ["donut", "plan", "third", "fourth"],       
             currentTab: "",
             w: 0, 
