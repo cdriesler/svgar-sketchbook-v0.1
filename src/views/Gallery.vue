@@ -1,15 +1,30 @@
 <template>
 <div id="gallery">
-    <div class="search">
+    <div class="filter">
+        <div class="filter__search">
+search
+        </div>
         <div class="search__prompt">
             search: 
         </div>
         <input type="text" v-model="query" />
     </div>
+    <div class="icons">
+        <div v-for="category in categories" :key="category.name" class="icons__category">
+            <div class="icons__category__label">
+                <div class="icons__category__label__text">
+                {{category.name}}&nbsp;
+                </div>   
+            </div>
+            <div v-for="drawing in category.drawings" :key="category + '_' + drawing" class="icons__category__drawing">
+            </div>
+        </div>
+    </div>
+    <!--
     <div class="gallery">
         <div class="selectors">
-            <div class="random" id="first">
-                ?
+            <div v-for="category in categories" :key="category" class="category">
+                {{category}}
             </div>
             <div 
             v-for="drawing in 200" 
@@ -27,6 +42,7 @@
             </div>
         </div>
     </div>
+    -->
 </div>
 
     <!--
@@ -88,11 +104,9 @@
     height: 100%;
 }
 
-.search {
+.filter {
     width: 100%;
     height: 20px;
-
-    margin-bottom: 10px;
 
     border-bottom: 2px solid black;
 
@@ -100,7 +114,23 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    align-content: center;
+}
+
+.filter__search {
+    height: 16px;
+
+    margin-left: 15px;
+
+    font-size: 10px;
+    line-height: 16px;
+    vertical-align: middle;
+    text-align: left;
+
+    border-right: 2px solid black;
+}
+
+.filter__search:hover {
+    background: gainsboro;
 }
 
 .search__prompt {
@@ -123,12 +153,61 @@
     outline: none;
 }
 
+.icons {
+    width: 100%;
+    height: 52px;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    
+    overflow-x: auto;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.icons__category {
+    height: 50px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    margin-right: 10px;
+}
+
+.icons__category__label {
+    height: 50px;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    border-left: 4px solid black;
+    border-right: 4px solid black;
+}
+
+.icons__category__label__text {
+    line-height: 48px;
+    vertical-align: middle;
+}
+
+.icons__category__drawing {
+    width: 48px;
+    height: 48px;
+
+    border: 2px solid black;
+
+    margin-left: 10px;
+}
+
 .gallery {
     width: 100%;
     height: calc(100% - 30px);
 }
 
-.random {
+.category {
     width: calc(100% - 4px);
     height: calc(100% - 4px);
     border-radius: 30px;
@@ -378,6 +457,22 @@ export default Vue.extend({
     },
     data() {
         return {
+            categories: [
+                {
+                    name: "demo",
+                    drawings: [
+                        "donut",
+                        "plan"
+                    ]
+                }, 
+                {
+                    name: "drafting",
+                    drawings: [
+                        "snap",
+                        "align",
+                        "split"
+                    ]
+                }],
             drawings: ["donut", "plan", "third", "fourth"],       
             currentTab: "",
             w: 0, 

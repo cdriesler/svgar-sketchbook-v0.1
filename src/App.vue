@@ -85,6 +85,7 @@
 
 .navigation {
   width: 100%;
+  min-height: 30px;
   height: 30px;
   border-bottom: 2px solid black;
 
