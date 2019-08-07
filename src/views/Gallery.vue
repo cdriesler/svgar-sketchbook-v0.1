@@ -1,10 +1,41 @@
 <template>
-<div class="gallery" @keydown.esc="onCancel">
+<div class="gallery">
+    <div class="selectors">
+        <div class="search" id="first">
+            search
+        </div>
+        <div 
+        v-for="drawing of drawings" 
+        v-bind:key="drawing"
+        @click="currentTab = drawing"
+        :class="{'selectors--active' : currentTab === drawing }" >
+            <div class="selectors__nib" :class="{'selectors__nib--active' : currentTab === drawing }">
+                <div class="component" ref="svgar" v-if="currentTab === drawing">
+
+                    <div class="fill">{{drawing}}</div>   
+                    <div v-if="settingsOn" class="settings"> </div>     
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--
+        @click="currentTab = drawing"
     <div class="canvas" @resize="onResize()">
     <div 
     ref="svgar" 
     class="svgar"
     >
+
+    </div>
+    -->
+
+
+</div>
+</template>
+
+<!-- old structure
         <component
         v-if="w > 0"
         
@@ -29,22 +60,8 @@
         
 
         ></component>
-    </div>
 
-    <div class="selectors">
-        <div 
-        v-for="drawing of drawings" 
-        v-bind:key="drawing" 
-        @click="currentTab = drawing"
-        :class="{ 
-            'selectors__nib--active' : currentTab === drawing,
-            'selectors__nib--first' : drawing === drawings[0] }"
-        class="selectors__nib">{{titles[drawing]}}
-        </div>  
-    </div>
-    </div>
-
-    <div class="inputs">
+            <div class="inputs">
         <div class="inputs__header">
             <span class="inputs__header__title">{{currentTab}}</span>
             <span class="inputs__header__description">&nbsp;:&nbsp;{{descriptions[currentTab]}}</span>
@@ -57,22 +74,21 @@
         @updateState="onUpdatePlanState"
         > </component>
     </div>
-</div>
-</template>
+-->
 
 <style>
 .gallery {
     width: 100%;
     height: 100%;
 
-    margin: 0;
+    padding-top: 10px;
+}
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    align-content: flex-start;
-    justify-content: space-around;
+.search {
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    border-radius: 30px;
+    border: 2px solid black;
 }
 
 .canvas {
@@ -110,22 +126,70 @@
 }
 
 .selectors {
-    width: calc(100% + 3px);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    grid-auto-rows: 1fr;
+    grid-gap: 10px;
+    grid-auto-flow: dense;
+}
 
-    margin-top: 20px;
-    margin-bottom: 20px;
+.selectors::before {
+    content: '';
+    width: 0;
+    padding-bottom: 100%;
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+}
 
-    height: 30px;
+.selectors > *:first-child {
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+}
 
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
+.selectors--active {
+    grid-row: span 4;
+    grid-column: span 4;
+}
 
-    overflow-x: auto;
-    overflow-y: visible;
+@keyframes grow_grid {
+    0% {
+        grid-row: span 2;
+        grid-column: span 2;
+    }
+    50% {
+        grid-row: span 3;
+        grid-column: span 3;
+    }
+    100% {
+        grid-row: span 4;
+        grid-column: span 4;       
+    }
+}
 
-    white-space: nowrap;
+@media screen and (min-width: 900px) {
+    .selectors--active {
+        grid-row: span 8;
+        grid-column: span 8;
+    }   
+
+    @keyframes grow_grid {
+        0% {
+            grid-row: span 2;
+            grid-column: span 2;
+        }
+        33% {
+            grid-row: span 4;
+            grid-column: span 4;
+        }
+        66% {
+            grid-row: span 6;
+            grid-column: span 6;
+        }
+        100% {
+            grid-row: span 8;
+            grid-column: span 8;       
+        }
+    }
 }
 
 .selectors::-webkit-scrollbar {
@@ -133,46 +197,62 @@
 }
 
 .selectors__nib {
-    font-size: 10px;
-    line-height: 20px;
-    
-    vertical-align: middle;
-
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-
-    border: 2px solid black;
-    outline: 1px solid white;
-    box-shadow: 4px 4px 0 0 black;
-
-    transform: translate(0, 0);
-
-    transition: transform;
+    width: 100%;
+    height: 100%;
+    outline: 2px solid black;
+    outline-offset: -2px;
 }
 
-.selectors__nib--first {
-    margin-left: 0px;
+.selectors__nib:hover:not(.selectors__nib--active) {
+    cursor: pointer;
+    background: gainsboro;
 }
 
 .selectors__nib--active {
-    color: white;
-    background: black;
-
-    outline-offset: -3px;
-
-    transform: translate(4px, 4px);
-    box-shadow: none;
+    z-index: 10;
+    background: white;
 }
 
-.selectors__nib:hover {
-    cursor: pointer;
+.settings {
+    width: calc(100% - 4px);
+    height: 20px;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    border-left: 2px solid black;
+    background: white;
 
-    animation-name: drop-button;
-    animation-duration: 0.2s;
-    animation-fill-mode: forwards;
-    animation-timing-function: ease-in;
+    animation-name: open_settings;
+    animation-duration: 0.75s;
+    animation-timing-function: linear;
+}
+
+@keyframes open_settings {
+    from {
+        height: 0;
+    }
+    to {
+        
+    }
+}
+
+.component {
+    width: 100%;
+    height: 100%;
+}
+
+.fill {
+    height: 100%;
+}
+
+@keyframes grow_nib {
+    from {
+        width: 50px;
+        height: 50px;
+    }
+    to {
+        width: 100%;
+        height: 100%;
+    }
 }
 
 @keyframes drop-button {
@@ -234,27 +314,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import DonutDrawing from '../components/DonutDrawing.vue';
-import DonutInputs from '../components/DonutInputs.vue';
-import PlanDrawing from '../components/PlanDrawing.vue';
-import PlanInputs from '../components/PlanInputs.vue';
+import DonutView from '../components/gallery/donut/DonutView.vue';
+import PlanView from '../components/gallery/plan/PlanView.vue';
 
 export default Vue.extend({
     components: {
-        DonutDrawing,
-        DonutInputs,
-        PlanDrawing,
-        PlanInputs
+        DonutView,
+        PlanView
     },
     data() {
         return {
-            drawings: ["donut", "plan"],       
-            currentTab: "plan",
+            drawings: ["donut", "plan", "third", "fourth"],       
+            currentTab: "",
             w: 0, 
-            offsetLeft: 0,
-            offsetTop: 0,
             touchStart: 0,
             touchDelta: 0,
+            settingsOn: false,
             state: "bw",
             values: [
                 10,
@@ -263,6 +338,8 @@ export default Vue.extend({
             titles: {
                 donut: "donut",
                 plan: "square plan",
+                third: "third",
+                fourth: "fourth"
             },
             descriptions: {
                 donut: "two color states"
@@ -358,6 +435,10 @@ export default Vue.extend({
     methods: {
         onResize() : void {
             this.w = (<Element>this.$refs.svgar).clientWidth;
+            console.log("Resize!");
+        },
+        onGetSettings() : void {
+            this.settingsOn = !this.settingsOn;
         },
         onSwipeLeft() : void {
             this.currentTab = this.drawings[(this.drawings.indexOf(this.currentTab) + 1) % this.drawings.length];

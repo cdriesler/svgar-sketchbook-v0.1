@@ -18,7 +18,7 @@
       </div>
       <div class="footer">
         <div class="footer__version">
-          0.2.3
+          0.3.1
         </div>   
         <div class="footer__source">
           <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt;</a>
@@ -89,15 +89,15 @@
   height: 30px;
   border-bottom: 2px solid black;
 
-  margin-bottom: 20px;
-
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
 }
 
 .navigation__link {
-  line-height: 30px;
+  height: 28px;
+  line-height: 28px;
   vertical-align: middle;
 
   text-decoration: none;
