@@ -197,15 +197,14 @@
 }
 
 .selectors__nib {
-    width: 100%;
-    height: 100%;
-    outline: 2px solid black;
-    outline-offset: -2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+
+    border: 2px solid black;
 }
 
 .selectors__nib:hover:not(.selectors__nib--active) {
     cursor: pointer;
-    background: gainsboro;
 }
 
 .selectors__nib--active {
