@@ -11,10 +11,10 @@
             <div class="gallery__active_icon__main">
             </div>
 
-            <div class="gallery__active_icon__right_toggle">
-            <div class="gallery__active_icon__right_toggle__button">
-                <div class="gallery__active_icon__right_toggle__button__text" @click="onToggleTray">{{trayIcon}}</div>
-            </div>
+            <div class="gallery__active_icon__right_toggle" @click="onToggleTray">
+                <div class="gallery__active_icon__right_toggle__button">
+                    <div class="gallery__active_icon__right_toggle__button__text" >{{trayIcon}}</div>
+                </div>
             </div>
 
 
@@ -28,10 +28,21 @@
             
         </div>
         <div class="gallery__body">
-            <div class="gallery__body__tabs" v-if="trayOpen" >
+            <div class="gallery__body__tabs" v-if="trayOpen == true" >
+                <div class="gallery__body__tabs__category" v-for="category in categories" :key="category.name">
+                    <div class="gallery__body__tabs__category__icons">
+                        <div class="gallery__body__tabs__category__icons__icon" v-for="drawing in category.drawings" :key="category + '_' + drawing">
+                        </div>
+                    </div>
+                    <div class="gallery__body__tabs__category__label">
+                        {{category.name}}
+                    </div>
+                </div>
             </div>
             <div class="gallery__body__view">
+                <div class="comp">
                     <div style="width: 50px; height: 1000px; outline: 2px solid black; outline-offset: -5px;"/>
+                </div>      
      
             </div>
         </div>
@@ -93,6 +104,8 @@
     display: grid;
     grid-template-rows: 62px 1fr;
     grid-template-columns: 62px 1fr;
+
+    overflow: hidden;
 }
 
 .gallery__active_icon {
@@ -216,15 +229,52 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    overflow: hidden;
 }
 
 .gallery__body__tabs {
-    height: 60px;
-    min-height: 60px;
+    height: 62px;
+    min-height: 62px;
     width: calc(100% - 10px);
+
+    overflow-y: auto;
 
     margin-left: 10px;
 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.gallery__body__tabs__category {
+    display: grid;
+    grid-template-rows: 50px 12px;
+}
+
+.gallery__body__tabs__category__icons {
+    grid-row: 1 / span 1;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.gallery__body__tabs__category__icons__icon {
+    width: 48px;
+    height: 48px;
+
+    border: 2px solid black;
+
+    margin-right: 10px;
+}
+
+.gallery__body__tabs__category__label {
+    grid-row: 2 / span 1;
+
+    width: calc(100% - 10px);
+
+    height: calc(100% - 2px);
     border-bottom: 2px solid black;
 }
 
@@ -239,6 +289,14 @@
     flex-direction: column;
     float: left;
 
+    overflow: hidden;
+}
+
+.comp {
+    width: 100%;
+    height: 100%;
+
+    overflow-y: auto;
 }
 
 </style>
@@ -393,6 +451,9 @@ export default Vue.extend({
         onResize() : void {
             this.w = (<Element>this.$refs.svgar).clientWidth;
             console.log("Resize!");
+        },
+        onToggleTray() : void {
+            this.trayOpen = !this.trayOpen;
         },
         startHandler(event: any) : void {
             this.touchStart = event.touches[0].pageX;
