@@ -340,11 +340,13 @@
 import Vue from 'vue'
 import DonutView from '../components/gallery/donut/DonutView.vue';
 import PlanView from '../components/gallery/plan/PlanView.vue';
+import LinesView from '../components/gallery/rhino/lines/LinesView.vue';
 
 export default Vue.extend({
     components: {
         DonutView,
-        PlanView
+        PlanView,
+        LinesView
     },
     data() {
         return {
@@ -365,10 +367,9 @@ export default Vue.extend({
                     ]
                 },
                 {
-                    name: "patterns",
+                    name: "rhino",
                     drawings: [
-                        "triangles",
-                        "circles"
+                        "lines",
                     ]
                 },
             ],      
