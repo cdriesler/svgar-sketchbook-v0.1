@@ -31,19 +31,28 @@
             <div class="gallery__body__tabs" v-if="trayOpen == true" >
                 <div class="gallery__body__tabs__category" v-for="category in categories" :key="category.name">
                     <div class="gallery__body__tabs__category__icons">
-                        <div class="gallery__body__tabs__category__icons__icon" v-for="drawing in category.drawings" :key="category + '_' + drawing">
+                        <div 
+                        class="gallery__body__tabs__category__icons__icon" 
+                        v-for="drawing in category.drawings" 
+                        :key="category + '_' + drawing"
+                        @click="currentTab = drawing"
+                        :class="{ 'gallery__body__tabs__category__icons__icon--active' : currentTab === drawing }">
                         </div>
                     </div>
                     <div class="gallery__body__tabs__category__label">
-                        {{category.name}}
+                        <!--
+                        <div class="gallery__body__tabs__category__label__text">
+                            {{category.name}}
+                        </div> 
+                        -->     
                     </div>
                 </div>
             </div>
-            <div class="gallery__body__view">
-                <div class="comp">
-                    <div style="width: 50px; height: 1000px; outline: 2px solid black; outline-offset: -5px;"/>
-                </div>      
-     
+            <div ref="svgar" class="gallery__body__view">
+                <component
+                :is="currentDrawingView"
+                :size="currentDrawingSize">
+                </component>       
             </div>
         </div>
     </div>
@@ -144,10 +153,6 @@
 
 .gallery__active_icon__right_toggle:hover {
     cursor: pointer;
-
-    animation-name: hint;
-    animation-duration: 0.75s;
-    animation-fill-mode: forwards;
 }
 
 @keyframes hint {
@@ -238,9 +243,11 @@
     min-height: 62px;
     width: calc(100% - 10px);
 
-    overflow-y: auto;
+    overflow-y: visible;
+    overflow-x: auto;
 
     margin-left: 10px;
+    margin-bottom: 10px;
 
     display: flex;
     flex-direction: row;
@@ -269,19 +276,47 @@
     margin-right: 10px;
 }
 
+.gallery__body__tabs__category__icons__icon:hover {
+    cursor: pointer;
+
+    background: gainsboro;
+}
+
+.gallery__body__tabs__category__icons__icon--active {
+    outline: 1px solid white;
+    outline-offset: -4px;
+
+    background: black;
+}
+
 .gallery__body__tabs__category__label {
     grid-row: 2 / span 1;
 
     width: calc(100% - 10px);
 
+    display: flex;
+    flex-direction: row;
+
     height: calc(100% - 2px);
     border-bottom: 2px solid black;
 }
 
+.gallery__body__tabs__category__label__text {
+    font-size: 10px;
+    line-height: 12px;
+
+    vertical-align: bottom;
+
+    background: white;
+    padding-right: 10px;
+    
+    transform: translate(-4px, 3px);
+}
+
 .gallery__body__view {
     width: calc(100% - 10px);
-    margin-top: 10px;
     margin-left: 10px;
+    margin-bottom: 10px;
 
     flex-grow: 1;
 
@@ -337,8 +372,10 @@ export default Vue.extend({
                     ]
                 },
             ],      
-            currentTab: "",
+            currentTab: "donut",
+            currentDrawingSize: 0,
             w: 0, 
+            h: 0,
             query: "",
             trayIcon: "+",
             trayOpen: true,
@@ -382,15 +419,16 @@ export default Vue.extend({
     mounted() {
         let canvas = <Element>this.$refs.svgar;
         this.w = canvas.clientWidth;
+        this.h = canvas.clientHeight;
+
+        this.setDrawingSize();
 
         window.addEventListener('resize', this.onResize);
+        canvas.addEventListener('resize', this.onResize);
     },
     computed: {
-        currentDrawingComponent() : string {
-            return this.currentTab + "-drawing";
-        },
-        currentInputComponent() : string {
-            return this.currentTab + "-inputs";
+        currentDrawingView() : string {
+            return this.currentTab + "-view";
         },
         valueNumbers() : number[] {
             return this.values as number[];
@@ -449,8 +487,10 @@ export default Vue.extend({
     },
     methods: {
         onResize() : void {
-            this.w = (<Element>this.$refs.svgar).clientWidth;
-            console.log("Resize!");
+            this.setDrawingSize();
+        },
+        setDrawingSize() : void {
+            this.currentDrawingSize = Math.min((<Element>this.$refs.svgar).clientWidth, (<Element>this.$refs.svgar).clientHeight);
         },
         onToggleTray() : void {
             this.trayOpen = !this.trayOpen;
