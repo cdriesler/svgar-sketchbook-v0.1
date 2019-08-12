@@ -12,8 +12,7 @@
 <script lang="ts">
 import Vue from 'vue'
 //import Module from '@/assets/js/compute.rhino3d.js';
-
-//declare var rhino3dm : any;
+import * as rhino3dm from 'rhino3dm';
 
 export default Vue.extend({
     name: "lines-view",
@@ -25,12 +24,18 @@ export default Vue.extend({
     methods: {
         onClick() : void {
 
-            const rhino3dm = require("rhino3dm");
-
+            console.log(Object.keys(rhino3dm()));
+            
             rhino3dm().then((rh:any) => {
+
+                console.log(Object.keys(rh));
+
                 let sphere = rh.Sphere([0,0,0], 5);
 
                 console.log(sphere);
+            })
+            .catch((e:any) => {
+                console.log(e);
             });
         }
     }
