@@ -18,10 +18,11 @@
       </div>
       <div class="footer">
         <div class="footer__version">
-          0.4.0
+          0.4.1
         </div>   
         <div class="footer__source">
-          <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt;</a>
+          <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt; svgar</a>
+          <a href="https://github.com/cdriesler/svgar.dev" target="_blank">&lt;/&gt; .dev</a>
         </div>   
       </div>
         <!--

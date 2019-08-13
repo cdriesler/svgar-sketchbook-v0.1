@@ -7,11 +7,12 @@
         <input type="text" v-model="query" />
     </div>
     <div class="gallery">
-        <div class="gallery__active_icon">
+        <div class="gallery__active_icon" @click="onToggleTray" >
             <div class="gallery__active_icon__main">
+                <img :src="activeIconSource">
             </div>
 
-            <div class="gallery__active_icon__right_toggle" @click="onToggleTray">
+            <div class="gallery__active_icon__right_toggle" >
                 <div class="gallery__active_icon__right_toggle__button">
                     <div class="gallery__active_icon__right_toggle__button__text" >{{trayIcon}}</div>
                 </div>
@@ -34,9 +35,10 @@
                         <div 
                         class="gallery__body__tabs__category__icons__icon" 
                         v-for="drawing in category.drawings" 
-                        :key="category + '_' + drawing"
-                        @click="currentTab = drawing"
-                        :class="{ 'gallery__body__tabs__category__icons__icon--active' : currentTab === drawing }">
+                        :key="category + '_' + drawing.name"
+                        @click="currentTab = drawing.name" >
+                        <img v-show="currentTab != drawing.name" width="47px" height="47px" :src="drawing.icon">
+                        <img v-show="currentTab === drawing.name" width="47px" height="47px" :src="drawing.activeIcon">
                         </div>
                     </div>
                     <div class="gallery__body__tabs__category__label">
@@ -280,8 +282,6 @@
 
 .gallery__body__tabs__category__icons__icon:hover {
     cursor: pointer;
-
-    background: gainsboro;
 }
 
 .gallery__body__tabs__category__icons__icon--active {
@@ -354,11 +354,20 @@ export default Vue.extend({
                 {
                     name: "demo",
                     drawings: [
-                        "donut",
-                        "plan"
+                        {
+                            name: "donut",
+                            icon: require('./../assets/svg/donut-icon.svg'),
+                            activeIcon: require('./../assets/svg/donut-icon-active.svg')
+                        },
+                        {
+                            name: "plan",
+                            icon: require('./../assets/svg/plan-icon.svg'),
+                            activeIcon: require('./../assets/svg/plan-icon-active.svg')
+                        }
                     ]
                 }, 
             ],      
+            currentCategory: "demo",
             currentTab: "donut",
             currentDrawingSize: 0,
             w: 0, 
@@ -381,6 +390,21 @@ export default Vue.extend({
         currentDrawingView() : string {
             return this.currentTab + "-view";
         },
+        activeIconSource() : any {
+            let activeCategory = this.categories.find(x => x.name == this.currentCategory);
+
+            if (activeCategory == undefined) {
+                return undefined;
+            }
+
+            let activeDrawing = activeCategory.drawings.find(x => x.name == this.currentTab);
+
+            if (activeDrawing == undefined) {
+                return undefined;
+            }
+
+            return activeDrawing.activeIcon;
+        }
     },
     methods: {
         onResize() : void {
@@ -394,6 +418,10 @@ export default Vue.extend({
 
             this.$nextTick(this.setDrawingSize);
         },
+        iconSource(name:string) : string {
+            const path = '../../assets/svg/' + name + '-icon.svg'
+            return require(path);
+        }
     },
     beforeDestroy: function () {
         window.removeEventListener('resize', this.onResize)

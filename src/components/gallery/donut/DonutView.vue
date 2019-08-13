@@ -11,7 +11,7 @@
             @selection="onUpdateSelection">
             </donut-drawing>
         </div>
-        <div class="donut__inputs" :style="{ 'max-width': (boxSize + 4) + 'px' }">
+        <div class="donut__inputs" :style="{ 'max-width': ((boxSize + 4) * 1.5) + 'px' }">
             <donut-inputs
             :selected="selected"
             @update="onInputUpdate">

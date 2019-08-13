@@ -12,7 +12,7 @@
             @endmove="onEndMove">
             </plan-drawing>
         </div>
-        <div class="donut__inputs" :style="{ 'max-width': (boxSize + 4) + 'px' }">
+        <div class="donut__inputs" :style="{ 'max-width': ((boxSize + 4) * 1.5) + 'px' }">
             <plan-inputs
             @updateState="onUpdateState"
             @reset="onReset">
