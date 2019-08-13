@@ -4,7 +4,7 @@
       <div class="header">
         <div class="header__logo">
           <router-link to="/">
-          <img height="52px" alt="svgar logo" src="./assets/svgar-logo.svg">
+          <img height="52px" alt="svgar logo" src="./assets/svg/svgar-logo.svg">
           </router-link>
         </div> 
       </div>
@@ -18,10 +18,11 @@
       </div>
       <div class="footer">
         <div class="footer__version">
-          0.2.3
+          0.4.2
         </div>   
         <div class="footer__source">
-          <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt;</a>
+          <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt; svgar</a>
+          <a href="https://github.com/cdriesler/svgar.dev" target="_blank">&lt;/&gt; .dev</a>
         </div>   
       </div>
         <!--
@@ -64,7 +65,6 @@
 .container {
   height: 100%;
   width: calc(100vw - 30px);
-  max-width: 1000px;
 
   display: flex;
   flex-direction: column;
@@ -86,18 +86,19 @@
 
 .navigation {
   width: 100%;
+  min-height: 30px;
   height: 30px;
   border-bottom: 2px solid black;
-
-  margin-bottom: 20px;
 
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
 }
 
 .navigation__link {
-  line-height: 30px;
+  height: 28px;
+  line-height: 28px;
   vertical-align: middle;
 
   text-decoration: none;

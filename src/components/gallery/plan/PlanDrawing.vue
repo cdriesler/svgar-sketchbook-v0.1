@@ -32,6 +32,7 @@
 <style>
 .arrow:hover {
     fill: black !important;
+    cursor: pointer;
 }
 
 .interior:hover {
@@ -47,7 +48,7 @@ import { SvgarDrawing, Drawing } from 'svgar/dist/models/schema/drawing/Drawing'
 
 export default Vue.extend({
     name: "plan-drawing",
-    props: ["size", "planState", "outerCorners", "innerCorners"],
+    props: ["size", "state", "outerCorners", "innerCorners"],
     data() {
         return {
             drawing: {} as Drawing,
@@ -57,7 +58,7 @@ export default Vue.extend({
         svgar() : SvgarDrawing {
             let dwg = new PlanBuilder(this.outerCorners, this.innerCorners).Build();
             this.drawing = dwg;
-            return dwg.ToSvg(this.planState, this.size, this.size);
+            return dwg.ToSvg(this.state, this.size, this.size);
         }
     },
     methods: {
