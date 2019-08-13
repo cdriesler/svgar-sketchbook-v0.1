@@ -340,13 +340,11 @@
 import Vue from 'vue'
 import DonutView from '../components/gallery/donut/DonutView.vue';
 import PlanView from '../components/gallery/plan/PlanView.vue';
-import LinesView from '../components/gallery/rhino/lines/LinesView.vue';
 
 export default Vue.extend({
     components: {
         DonutView,
-        PlanView,
-        LinesView
+        PlanView
     },
     data() {
         return {
@@ -364,12 +362,6 @@ export default Vue.extend({
                         "snap",
                         "align",
                         "split"
-                    ]
-                },
-                {
-                    name: "rhino",
-                    drawings: [
-                        "lines",
                     ]
                 },
             ],      
@@ -495,6 +487,8 @@ export default Vue.extend({
         },
         onToggleTray() : void {
             this.trayOpen = !this.trayOpen;
+
+            this.$nextTick(this.setDrawingSize);
         },
         startHandler(event: any) : void {
             this.touchStart = event.touches[0].pageX;

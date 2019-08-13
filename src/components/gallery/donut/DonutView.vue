@@ -2,10 +2,20 @@
     <div id="donut-view">
         <div class="donut__box" :style="{ 'min-width': boxSize + 'px', 'min-height': boxSize + 'px' }">
             <donut-drawing
-            :size="boxSize"></donut-drawing>
+            v-if="boxSize > 0"
+            :size="boxSize - 4"
+            :values="values"
+            :labels="labels"
+            :colors="colors"
+            :selected="selected"
+            @selection="onUpdateSelection">
+            </donut-drawing>
         </div>
         <div class="donut__inputs" :style="{ 'max-width': (boxSize + 4) + 'px' }">
-            <donut-inputs></donut-inputs>
+            <donut-inputs
+            :selected="selected"
+            @update="onInputUpdate">
+            </donut-inputs>
         </div>       
     </div>
 </template>
@@ -55,9 +65,35 @@ export default Vue.extend({
         DonutInputs,
         DonutDrawing
     },
+    data() {
+        //'size', 'values', 'labels', 'colors', 'selected'
+        return {
+            values: [ 16, 54, 21, 10 ],
+            labels: [ "first", "second", "third", "fourth" ],
+            colors: [],
+            selected: -1
+        }
+    },
     computed: {
         boxSize() : number {
             return this.size - 8;
+        }
+    },
+    methods: {
+        onInputUpdate(data:any) : void {
+            this.values = data;
+        },
+        onUpdateSelection(tags:string[]) : void {
+            let valid = tags.filter(x => this.labels.includes(x));
+            
+            if (valid.length <= 0) {
+                this.selected = -1;
+                return;
+            }
+
+            let i = this.labels.indexOf(valid[0]) + 1;
+
+            this.selected = i == this.labels.length ? 0 : i;
         }
     }
 })
