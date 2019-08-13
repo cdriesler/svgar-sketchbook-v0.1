@@ -1,6 +1,6 @@
 <template>
 <div id="gallery-wrapper">
-    <div class="search">
+    <div class="search" v-if="false">
         <div class="search__prompt">
             search: 
         </div>
@@ -109,6 +109,8 @@
 .gallery {
     width: 100%;
     flex-grow: 1;
+
+    margin-top: 10px;
 
     display: grid;
     grid-template-rows: 62px 1fr;
@@ -356,14 +358,6 @@ export default Vue.extend({
                         "plan"
                     ]
                 }, 
-                {
-                    name: "drafting",
-                    drawings: [
-                        "snap",
-                        "align",
-                        "split"
-                    ]
-                },
             ],      
             currentTab: "donut",
             currentDrawingSize: 0,
@@ -372,41 +366,6 @@ export default Vue.extend({
             query: "",
             trayIcon: "+",
             trayOpen: true,
-
-            touchStart: 0,
-            touchDelta: 0,
-            settingsOn: false,
-            state: "bw",
-            values: [
-                10,
-                20
-            ],
-            titles: {
-                donut: "donut",
-                plan: "square plan",
-                third: "third",
-                fourth: "fourth"
-            },
-            descriptions: {
-                donut: "two color states"
-            },
-            labels: [
-                'WORK',     
-                'MEET',     
-                'WE',       
-                'OPERATE',  
-                'CIRCULATE'
-            ],
-            selectedTags: [] as string[],
-            outer: [.7, .9, .3, .9, .3, .1, .7, .1],
-            inner: [.55, .7, .45, .7, .45, .3, .55, .3],
-            planState: "edit",
-            moveIndex: [] as number[],
-            moveStart: 0,
-            moveDelta: 0,
-            moveDirection: "",
-            moveTarget: "",
-            moving: false,
         }
     },
     mounted() {
@@ -417,14 +376,10 @@ export default Vue.extend({
         this.setDrawingSize();
 
         window.addEventListener('resize', this.onResize);
-        //canvas.addEventListener('resize', this.onResize);
     },
     computed: {
         currentDrawingView() : string {
             return this.currentTab + "-view";
-        },
-        valueNumbers() : number[] {
-            return this.values as number[];
         },
     },
     methods: {
@@ -438,10 +393,6 @@ export default Vue.extend({
             this.trayOpen = !this.trayOpen;
 
             this.$nextTick(this.setDrawingSize);
-        },
-        onCancel() : void {
-            console.log("PLEASE STOP");
-            this.moving = false;
         },
     },
     beforeDestroy: function () {

@@ -76,7 +76,7 @@ export default Vue.extend({
     },
     computed: {
         boxSize() : number {
-            return this.size - 8;
+            return Math.max(this.size - 8, 250);
         }
     },
     methods: {

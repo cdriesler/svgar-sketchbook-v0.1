@@ -4,7 +4,7 @@
       <div class="header">
         <div class="header__logo">
           <router-link to="/">
-          <img height="52px" alt="svgar logo" src="./assets/svgar-logo.svg">
+          <img height="52px" alt="svgar logo" src="./assets/svg/svgar-logo.svg">
           </router-link>
         </div> 
       </div>
