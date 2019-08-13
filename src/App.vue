@@ -18,7 +18,7 @@
       </div>
       <div class="footer">
         <div class="footer__version">
-          0.4.1
+          0.4.2
         </div>   
         <div class="footer__source">
           <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt; svgar</a>
