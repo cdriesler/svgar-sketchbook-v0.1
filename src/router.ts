@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Gallery from './views/Gallery.vue';
+import Editor from './views/Editor.vue';
 
 Vue.use(Router);
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/gallery',
       name: 'gallery',
       component: Gallery,
+    },
+    {
+      path: '/editor',
+      name: 'editor',
+      component: Editor
     }
   ],
 });

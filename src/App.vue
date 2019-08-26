@@ -11,6 +11,7 @@
       <div class="navigation">
         <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/">home</router-link>
         <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/gallery">gallery</router-link>
+        <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/editor">editor</router-link>
         <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/docs">docs</router-link>
       </div>
       <div class="box">
