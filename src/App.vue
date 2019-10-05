@@ -10,7 +10,6 @@
       </div>
       <div class="navigation">
         <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/">home</router-link>
-        <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/gallery">gallery</router-link>
         <router-link class="navigation__link" exact-active-class="navigation__link--active" to="/docs">docs</router-link>
       </div>
       <div class="box">
@@ -18,11 +17,10 @@
       </div>
       <div class="footer">
         <div class="footer__version">
-          0.4.2
+          0.3
         </div>   
         <div class="footer__source">
           <a href="https://github.com/WeWorkSandbox/svgar" target="_blank">&lt;/&gt; svgar</a>
-          <a href="https://github.com/cdriesler/svgar.dev" target="_blank">&lt;/&gt; .dev</a>
         </div>   
       </div>
         <!--
